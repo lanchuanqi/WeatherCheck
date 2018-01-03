@@ -16,6 +16,8 @@
 		02DEFD681FF55E9F00A890C4 /* WeatherCheckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD671FF55E9F00A890C4 /* WeatherCheckTests.swift */; };
 		02DEFD731FF55E9F00A890C4 /* WeatherCheckUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD721FF55E9F00A890C4 /* WeatherCheckUITests.swift */; };
 		02DEFD841FF5765200A890C4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 02DEFD831FF5765200A890C4 /* GoogleService-Info.plist */; };
+		02DEFD871FF5A0A700A890C4 /* APIHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD861FF5A0A700A890C4 /* APIHandler.swift */; };
+		02DEFD8B1FF5B3B400A890C4 /* WeatherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD8A1FF5B3B400A890C4 /* WeatherData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +53,8 @@
 		02DEFD721FF55E9F00A890C4 /* WeatherCheckUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCheckUITests.swift; sourceTree = "<group>"; };
 		02DEFD741FF55E9F00A890C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		02DEFD831FF5765200A890C4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		02DEFD861FF5A0A700A890C4 /* APIHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIHandler.swift; sourceTree = "<group>"; };
+		02DEFD8A1FF5B3B400A890C4 /* WeatherData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,14 +105,14 @@
 		02DEFD4E1FF55E9F00A890C4 /* WeatherCheck */ = {
 			isa = PBXGroup;
 			children = (
-				02DEFD821FF560E100A890C4 /* Controller */,
-				02DEFD4F1FF55E9F00A890C4 /* AppDelegate.swift */,
-				02DEFD531FF55E9F00A890C4 /* Main.storyboard */,
-				02DEFD591FF55E9F00A890C4 /* Assets.xcassets */,
-				02DEFD5B1FF55E9F00A890C4 /* LaunchScreen.storyboard */,
-				02DEFD5E1FF55E9F00A890C4 /* Info.plist */,
-				02DEFD561FF55E9F00A890C4 /* WeatherCheck.xcdatamodeld */,
 				02DEFD831FF5765200A890C4 /* GoogleService-Info.plist */,
+				02DEFD4F1FF55E9F00A890C4 /* AppDelegate.swift */,
+				02DEFD5E1FF55E9F00A890C4 /* Info.plist */,
+				02DEFD591FF55E9F00A890C4 /* Assets.xcassets */,
+				02DEFD851FF5A08600A890C4 /* APIKit */,
+				02DEFD821FF560E100A890C4 /* Controller */,
+				02DEFD891FF5B3A100A890C4 /* Model */,
+				02DEFD881FF5AC4900A890C4 /* Other */,
 			);
 			path = WeatherCheck;
 			sourceTree = "<group>";
@@ -137,6 +141,32 @@
 				02DEFD511FF55E9F00A890C4 /* MainMapViewController.swift */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		02DEFD851FF5A08600A890C4 /* APIKit */ = {
+			isa = PBXGroup;
+			children = (
+				02DEFD861FF5A0A700A890C4 /* APIHandler.swift */,
+			);
+			path = APIKit;
+			sourceTree = "<group>";
+		};
+		02DEFD881FF5AC4900A890C4 /* Other */ = {
+			isa = PBXGroup;
+			children = (
+				02DEFD531FF55E9F00A890C4 /* Main.storyboard */,
+				02DEFD5B1FF55E9F00A890C4 /* LaunchScreen.storyboard */,
+				02DEFD561FF55E9F00A890C4 /* WeatherCheck.xcdatamodeld */,
+			);
+			path = Other;
+			sourceTree = "<group>";
+		};
+		02DEFD891FF5B3A100A890C4 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				02DEFD8A1FF5B3B400A890C4 /* WeatherData.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -275,8 +305,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				02DEFD521FF55E9F00A890C4 /* MainMapViewController.swift in Sources */,
+				02DEFD8B1FF5B3B400A890C4 /* WeatherData.swift in Sources */,
 				02DEFD581FF55E9F00A890C4 /* WeatherCheck.xcdatamodeld in Sources */,
 				02DEFD501FF55E9F00A890C4 /* AppDelegate.swift in Sources */,
+				02DEFD871FF5A0A700A890C4 /* APIHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
