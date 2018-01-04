@@ -16,6 +16,8 @@ import MapKit
 class MainMapViewController: UIViewController, GMSMapViewDelegate{
     var locationManager = CLLocationManager()
     var userDefaultLanguages: [AnyHashable]?
+    var detailTableCellId = "detailTableCell"
+    var weatherDetailList = [String]()
     
     //main page
     var googleMapView: GMSMapView = {
@@ -26,7 +28,7 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
     var barView: UIView = {
         var view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1)
+        view.backgroundColor = #colorLiteral(red: 1, green: 0.4054822537, blue: 0.3988908923, alpha: 1)
         return view
     }()
     var homeButton: UIButton = {
@@ -48,6 +50,7 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
                     if let data = weatherData{
                         DispatchQueue.main.async {
                             self.setDetailViewLabels(data: data)
+                            self.weatherDeatilTableView.reloadData()
                             self.showPopUpView()
                         }
                     }
@@ -56,10 +59,34 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
         }
     }
     func setDetailViewLabels(data: WeatherData){
+        guard let base = data.base else {return}
         guard let mainDes = data.weather?[0].description else {return}
-        self.weatherDescriptionLabel.text = mainDes
+        guard let temp = data.main?.temp else {return}
+        guard let pressure = data.main?.pressure else {return}
+        guard let humidity = data.main?.humidity else {return}
+        guard let tempMin = data.main?.temp_min else {return}
+        guard let tempMax = data.main?.temp_max else {return}
+        let visiablity = data.visibility
+        guard let windSpeed = data.wind?.speed else {return}
+        guard let windDeg = data.wind?.deg else {return}
+        guard let cloud = data.clouds?.all else {return}
+        guard let sunrise = data.sys?.sunrise else {return}
+        guard let sunset = data.sys?.sunset else {return}
+        
+        self.weatherDetailList.removeAll()
+        self.weatherDetailList.append("Base Description: \(base)")
+        self.weatherDetailList.append("Main Description: \(mainDes)")
+        self.weatherDetailList.append("Current Temperature: \(temp)")
+        self.weatherDetailList.append("Today's Temperature: \(tempMin) - \(tempMax)")
+        self.weatherDetailList.append("Humidity: \(humidity)%")
+        self.weatherDetailList.append("Atmospheric Pressure: \(pressure)")
+        self.weatherDetailList.append("Visiablity: \(visiablity)")
+        self.weatherDetailList.append("WindSpeed: \(windSpeed)")
+        self.weatherDetailList.append("WindDegree: \(windDeg)")
+        self.weatherDetailList.append("Cloud: \(cloud)")
+        self.weatherDetailList.append("Sunrise to Sunset: \(sunrise) - \(sunset)")
     }
-    
+
     //detail page
     var popUpWeatherDetailView: UIView = {
         var view = UIView()
@@ -68,28 +95,28 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
         view.backgroundColor = #colorLiteral(red: 1, green: 0.4054822537, blue: 0.3988908923, alpha: 1)
         return view
     }()
-    var weatherDescriptionLabel: UILabel = {
-        var label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 12)
-        return label
-    }()
+
     var todayWeatherLabel: UILabel = {
         var label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = UIColor.white
         label.font = UIFont.boldSystemFont(ofSize: 16)
-        label.text = "Today's Weather"
         label.textAlignment = .center
         
         return label
     }()
+    var weatherDeatilTableView: UITableView = {
+        var tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.layer.cornerRadius = 15
+        return tableView
+    }()
+    
     var dismissPopUpViewButton: UIButton = {
         var button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("OK", for: .normal)
-        button.setTitleColor(UIColor.blue, for: .normal)
+        button.setTitleColor(#colorLiteral(red: 1, green: 0.4054822537, blue: 0.3988908923, alpha: 1), for: .normal)
         button.backgroundColor = UIColor.white
         button.addTarget(self, action: #selector(dismissPopUpViewButtonClicked), for: .touchUpInside)
         button.layer.cornerRadius = 5
@@ -102,14 +129,14 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
     func hidePopUpView(){
         self.popUpWeatherDetailView.isHidden = true
         self.dismissPopUpViewButton.isHidden = true
-        self.weatherDescriptionLabel.isHidden = true
         self.todayWeatherLabel.isHidden = true
+        self.weatherDeatilTableView.isHidden = true
     }
     func showPopUpView(){
         self.popUpWeatherDetailView.isHidden = false
         self.dismissPopUpViewButton.isHidden = false
-        self.weatherDescriptionLabel.isHidden = false
         self.todayWeatherLabel.isHidden = false
+        self.weatherDeatilTableView.isHidden = false
     }
     
     
@@ -150,7 +177,7 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
             UserDefaults.standard.set(self.userDefaultLanguages, forKey: "AppleLanguages")
             if let markerData = resultMarker?[0]{
                 if let city = markerData.locality{
-                    print(city)
+                    self.todayWeatherLabel.text = "Today's Weather at " + city
                     completion(city)
                 }
                 else{
@@ -171,6 +198,7 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
         super.viewDidLoad()
         setUpViews()
         setUpLocationAndMap()
+        setUpTableView()
     }
     override func viewDidAppear(_ animated: Bool) {
         updateLocationOnMap()
@@ -214,14 +242,19 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
         todayWeatherLabel.rightAnchor.constraint(equalTo: popUpWeatherDetailView.rightAnchor, constant: -10).isActive = true
         todayWeatherLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
-        self.popUpWeatherDetailView.addSubview(weatherDescriptionLabel)
-        weatherDescriptionLabel.topAnchor.constraint(equalTo: todayWeatherLabel.bottomAnchor, constant: 10).isActive = true
-        weatherDescriptionLabel.leftAnchor.constraint(equalTo: popUpWeatherDetailView.leftAnchor, constant: 10).isActive = true
-        weatherDescriptionLabel.rightAnchor.constraint(equalTo: popUpWeatherDetailView.rightAnchor, constant: -10).isActive = true
-        weatherDescriptionLabel.heightAnchor.constraint(equalToConstant: 15).isActive = true
-        
+        self.popUpWeatherDetailView.addSubview(weatherDeatilTableView)
+        weatherDeatilTableView.topAnchor.constraint(equalTo: todayWeatherLabel.bottomAnchor, constant: 10).isActive = true
+        weatherDeatilTableView.leftAnchor.constraint(equalTo: self.popUpWeatherDetailView.leftAnchor, constant: 10).isActive = true
+        weatherDeatilTableView.rightAnchor.constraint(equalTo: self.popUpWeatherDetailView.rightAnchor, constant: -10).isActive = true
+        weatherDeatilTableView.bottomAnchor.constraint(equalTo: self.dismissPopUpViewButton.topAnchor, constant: -10).isActive = true
     }
     
+    func setUpTableView(){
+        self.weatherDeatilTableView.delegate = self
+        self.weatherDeatilTableView.dataSource = self
+        self.weatherDeatilTableView.register(WeatherDetailTableViewCell.self, forCellReuseIdentifier: detailTableCellId)
+        self.weatherDeatilTableView.separatorColor = #colorLiteral(red: 1, green: 0.4054822537, blue: 0.3988908923, alpha: 1)
+    }
     
     
 }
@@ -243,3 +276,24 @@ extension MainMapViewController: CLLocationManagerDelegate{
         }
     }
 }
+extension MainMapViewController: UITableViewDelegate, UITableViewDataSource{
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.weatherDetailList.count
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: detailTableCellId, for: indexPath) as! WeatherDetailTableViewCell
+
+        cell.textLabel?.textColor = #colorLiteral(red: 1, green: 0.4054822537, blue: 0.3988908923, alpha: 1)
+        cell.textLabel?.text = self.weatherDetailList[indexPath.row]
+        cell.selectionStyle = .none
+        return cell
+    }
+}
+
+
+
+
+

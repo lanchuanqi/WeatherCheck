@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		028A164C1FFD93B500E0DBAC /* WeatherDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A164B1FFD93B500E0DBAC /* WeatherDetailTableViewCell.swift */; };
 		02DEFD501FF55E9F00A890C4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD4F1FF55E9F00A890C4 /* AppDelegate.swift */; };
 		02DEFD521FF55E9F00A890C4 /* MainMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD511FF55E9F00A890C4 /* MainMapViewController.swift */; };
 		02DEFD551FF55E9F00A890C4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02DEFD531FF55E9F00A890C4 /* Main.storyboard */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		028A164B1FFD93B500E0DBAC /* WeatherDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDetailTableViewCell.swift; sourceTree = "<group>"; };
 		02DEFD4C1FF55E9F00A890C4 /* WeatherCheck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherCheck.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		02DEFD4F1FF55E9F00A890C4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		02DEFD511FF55E9F00A890C4 /* MainMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMapViewController.swift; sourceTree = "<group>"; };
@@ -82,6 +84,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		028A164A1FFD939300E0DBAC /* View */ = {
+			isa = PBXGroup;
+			children = (
+				028A164B1FFD93B500E0DBAC /* WeatherDetailTableViewCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		02DEFD431FF55E9F00A890C4 = {
 			isa = PBXGroup;
 			children = (
@@ -112,6 +122,7 @@
 				02DEFD851FF5A08600A890C4 /* APIKit */,
 				02DEFD821FF560E100A890C4 /* Controller */,
 				02DEFD891FF5B3A100A890C4 /* Model */,
+				028A164A1FFD939300E0DBAC /* View */,
 				02DEFD881FF5AC4900A890C4 /* Other */,
 			);
 			path = WeatherCheck;
@@ -304,6 +315,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				028A164C1FFD93B500E0DBAC /* WeatherDetailTableViewCell.swift in Sources */,
 				02DEFD521FF55E9F00A890C4 /* MainMapViewController.swift in Sources */,
 				02DEFD8B1FF5B3B400A890C4 /* WeatherData.swift in Sources */,
 				02DEFD581FF55E9F00A890C4 /* WeatherCheck.xcdatamodeld in Sources */,

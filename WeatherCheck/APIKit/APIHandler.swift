@@ -22,13 +22,10 @@ class APIHandler{
         
         // The data task retrieves the data.
         let dataTask = URLSession.shared.dataTask(with: weatherRequestURL) { (data, response, error) in
-            if let error = error {
-                // Case 1: Error
-                // We got some kind of error while trying to get data from the server.
-                print("Error:\n\(error)")
+            if error != nil {
+                completion(nil)
             }
             else {
-                //let dataString = String(data: data!, encoding: String.Encoding.utf8)
                 guard let datas = data else { return }
                 do {
                     let weatherData = try JSONDecoder().decode(WeatherData.self, from: datas)
