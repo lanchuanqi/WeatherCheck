@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0278570B200E6687000BD59A /* HelpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0278570A200E6687000BD59A /* HelpManager.swift */; };
 		028A164C1FFD93B500E0DBAC /* WeatherDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A164B1FFD93B500E0DBAC /* WeatherDetailTableViewCell.swift */; };
 		02DEFD501FF55E9F00A890C4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD4F1FF55E9F00A890C4 /* AppDelegate.swift */; };
 		02DEFD521FF55E9F00A890C4 /* MainMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD511FF55E9F00A890C4 /* MainMapViewController.swift */; };
@@ -39,6 +40,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0278570A200E6687000BD59A /* HelpManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpManager.swift; sourceTree = "<group>"; };
 		028A164B1FFD93B500E0DBAC /* WeatherDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDetailTableViewCell.swift; sourceTree = "<group>"; };
 		02DEFD4C1FF55E9F00A890C4 /* WeatherCheck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherCheck.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		02DEFD4F1FF55E9F00A890C4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -84,6 +86,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		02785709200E6665000BD59A /* HelperFunctions */ = {
+			isa = PBXGroup;
+			children = (
+				0278570A200E6687000BD59A /* HelpManager.swift */,
+			);
+			path = HelperFunctions;
+			sourceTree = "<group>";
+		};
 		028A164A1FFD939300E0DBAC /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -120,6 +130,7 @@
 				02DEFD5E1FF55E9F00A890C4 /* Info.plist */,
 				02DEFD591FF55E9F00A890C4 /* Assets.xcassets */,
 				02DEFD851FF5A08600A890C4 /* APIKit */,
+				02785709200E6665000BD59A /* HelperFunctions */,
 				02DEFD821FF560E100A890C4 /* Controller */,
 				02DEFD891FF5B3A100A890C4 /* Model */,
 				028A164A1FFD939300E0DBAC /* View */,
@@ -318,6 +329,7 @@
 				028A164C1FFD93B500E0DBAC /* WeatherDetailTableViewCell.swift in Sources */,
 				02DEFD521FF55E9F00A890C4 /* MainMapViewController.swift in Sources */,
 				02DEFD8B1FF5B3B400A890C4 /* WeatherData.swift in Sources */,
+				0278570B200E6687000BD59A /* HelpManager.swift in Sources */,
 				02DEFD581FF55E9F00A890C4 /* WeatherCheck.xcdatamodeld in Sources */,
 				02DEFD501FF55E9F00A890C4 /* AppDelegate.swift in Sources */,
 				02DEFD871FF5A0A700A890C4 /* APIHandler.swift in Sources */,

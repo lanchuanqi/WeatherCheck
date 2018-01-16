@@ -18,6 +18,9 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
     var userDefaultLanguages: [AnyHashable]?
     var detailTableCellId = "detailTableCell"
     var weatherDetailList = [String]()
+    var weatherData: WeatherData?
+    
+    
     
     //main page
     var googleMapView: GMSMapView = {
@@ -25,6 +28,52 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
         mapview.translatesAutoresizingMaskIntoConstraints = false
         return mapview
     }()
+    var leftWeatherView: UIView = {
+        var view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.white
+        view.layer.cornerRadius = 15
+        return view
+    }()
+    var leftWeatherIcon: UIImageView = {
+        var imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = #imageLiteral(resourceName: "sun")
+        imageView.backgroundColor = UIColor.white
+        imageView.layer.cornerRadius = 15
+        return imageView
+    }()
+    var leftWeatherDegreeLabel: UILabel = {
+        var label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "HelveticaNeue-Light", size: 25)
+        label.text = "0"
+        label.minimumScaleFactor = 0.5
+        label.textAlignment = .right
+        return label
+    }()
+    var leftWeatherFahrenheitLabel: UILabel = {
+        var label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "°F"
+        label.font = UIFont(name: "bold", size: 8)
+        return label
+    }()
+    
+    var addCityMarkerButton: UIButton = {
+        var button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(#imageLiteral(resourceName: "plus"), for: .normal)
+        button.layer.cornerRadius = 20
+        button.addTarget(self, action: #selector(addMarkerButtonClicked), for: .touchUpInside)
+        return button
+    }()
+    
+    @objc func addMarkerButtonClicked(sender: UIButton){
+        print("add marker")
+    }
+    
+    
     var barView: UIView = {
         var view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -40,51 +89,7 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
     }()
     
     @objc func homeButtonClicked(sender: UIButton){
-        guard let location = self.getCurrentLocation() else{return}
-        
-        let camera = GMSCameraPosition.camera(withLatitude: (location.latitude), longitude: (location.longitude), zoom: 10.0)
-        self.googleMapView.animate(to: camera)
-        self.getCityNameByCoordinate(location: location) { (name) in
-            if let cityName = name{
-                APIHandler().getWeatherFromCityName(city: cityName, completion: { (weatherData) in
-                    if let data = weatherData{
-                        DispatchQueue.main.async {
-                            self.setDetailViewLabels(data: data)
-                            self.weatherDeatilTableView.reloadData()
-                            self.showPopUpView()
-                        }
-                    }
-                })
-            }
-        }
-    }
-    func setDetailViewLabels(data: WeatherData){
-        guard let base = data.base else {return}
-        guard let mainDes = data.weather?[0].description else {return}
-        guard let temp = data.main?.temp else {return}
-        guard let pressure = data.main?.pressure else {return}
-        guard let humidity = data.main?.humidity else {return}
-        guard let tempMin = data.main?.temp_min else {return}
-        guard let tempMax = data.main?.temp_max else {return}
-        let visiablity = data.visibility
-        guard let windSpeed = data.wind?.speed else {return}
-        guard let windDeg = data.wind?.deg else {return}
-        guard let cloud = data.clouds?.all else {return}
-        guard let sunrise = data.sys?.sunrise else {return}
-        guard let sunset = data.sys?.sunset else {return}
-        
-        self.weatherDetailList.removeAll()
-        self.weatherDetailList.append("Base Description: \(base)")
-        self.weatherDetailList.append("Main Description: \(mainDes)")
-        self.weatherDetailList.append("Current Temperature: \(temp)")
-        self.weatherDetailList.append("Today's Temperature: \(tempMin) - \(tempMax)")
-        self.weatherDetailList.append("Humidity: \(humidity)%")
-        self.weatherDetailList.append("Atmospheric Pressure: \(pressure)")
-        self.weatherDetailList.append("Visiablity: \(visiablity)")
-        self.weatherDetailList.append("WindSpeed: \(windSpeed)")
-        self.weatherDetailList.append("WindDegree: \(windDeg)")
-        self.weatherDetailList.append("Cloud: \(cloud)")
-        self.weatherDetailList.append("Sunrise to Sunset: \(sunrise) - \(sunset)")
+        print("home button clicked")
     }
 
     //detail page
@@ -140,15 +145,6 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
     }
     
     
-    func setUpLocationAndMap(){
-        self.locationManager.delegate = self
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        self.locationManager.requestWhenInUseAuthorization()
-        
-        self.googleMapView.delegate = self
-        self.googleMapView.isMyLocationEnabled = true
-    }
-    
     func updateLocationOnMap(){
         if let myLocation = locationManager.location{
             let camera = GMSCameraPosition.camera(withLatitude: myLocation.coordinate.latitude, longitude:myLocation.coordinate.longitude, zoom: 10.0)
@@ -191,8 +187,89 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
             }
         }
     }
+    func getWeatherInfoByCoordinate(){
+        guard let location = self.getCurrentLocation() else {return}
+        APIHandler().getWeatherFromLocationCoordinates(lat: location.latitude, long: location.longitude) { (data) in
+            if let weatherData = data{
+                DispatchQueue.main.async {
+                    self.updateMainUIBasedOnWeatherData(data: weatherData)
+                }
+                
+            }
+        }
+    }
+    func updateMainUIBasedOnWeatherData(data: WeatherData){
+        guard let weatherId = data.weather?[0].id else {return}
+        guard let temp = data.main?.temp else {return}
+        self.leftWeatherDegreeLabel.text = String(HelpManager.convertKelvinToFahrenheit(kelvin: temp))
+        self.leftWeatherIcon.image = HelpManager.getWeatherIconBasedOnWeatherConditionCode(code: weatherId)
+    }
     
     
+    func getWeatherInfoByCityName(){
+        guard let location = self.getCurrentLocation() else{return}
+        let camera = GMSCameraPosition.camera(withLatitude: (location.latitude), longitude: (location.longitude), zoom: 10.0)
+        self.googleMapView.animate(to: camera)
+        self.getCityNameByCoordinate(location: location) { (name) in
+            if let cityName = name{
+                APIHandler().getWeatherFromCityName(city: cityName, completion: { (weatherData) in
+                    if let data = weatherData{
+                        DispatchQueue.main.async {
+                            self.setDetailViewLabels(data: data)
+//                            self.weatherDeatilTableView.reloadData()
+//                            self.showPopUpView()
+                        }
+                    }
+                })
+            }
+        }
+    }
+    func setDetailViewLabels(data: WeatherData){
+        guard let base = data.base else {return}
+        guard let mainDes = data.weather?[0].description else {return}
+        guard let temp = data.main?.temp else {return}
+        guard let pressure = data.main?.pressure else {return}
+        guard let humidity = data.main?.humidity else {return}
+//        guard let tempMin = data.main?.temp_min else {return}
+//        guard let tempMax = data.main?.temp_max else {return}
+        let visiablity = data.visibility
+        guard let windSpeed = data.wind?.speed else {return}
+        guard let windDeg = data.wind?.deg else {return}
+        guard let cloud = data.clouds?.all else {return}
+        guard let sunrise = data.sys?.sunrise else {return}
+        guard let sunset = data.sys?.sunset else {return}
+        
+//        self.weatherDetailList.removeAll()
+//        self.weatherDetailList.append("Base Description: \(base)")
+//        self.weatherDetailList.append("Main Description: \(mainDes)")
+//        self.weatherDetailList.append("Current Temperature: \(temp)")
+//        self.weatherDetailList.append("Today's Temperature: \(tempMin) - \(tempMax)")
+//        self.weatherDetailList.append("Humidity: \(humidity)%")
+//        self.weatherDetailList.append("Atmospheric Pressure: \(pressure)")
+//        self.weatherDetailList.append("Visiablity: \(visiablity)")
+//        self.weatherDetailList.append("WindSpeed: \(windSpeed)")
+//        self.weatherDetailList.append("WindDegree: \(windDeg)")
+//        self.weatherDetailList.append("Cloud: \(cloud)")
+//        self.weatherDetailList.append("Sunrise to Sunset: \(sunrise) - \(sunset)")
+        
+        let fahrenheit = HelpManager.convertKelvinToFahrenheit(kelvin: temp)
+        self.leftWeatherDegreeLabel.text = "\(Int(fahrenheit))"
+        
+        let windDirection = HelpManager.convertWindDegreeToDirection(degree: windDeg)
+        let windSpeedOneDecimal = Double(round(10*windSpeed)/10)
+        print("\(windDirection) \(windSpeedOneDecimal)m/s")
+        
+        let cloudiness = Int(cloud)
+        print("cloudiness: \(cloudiness)%")
+        print("Atmospheric pressure: \(pressure)hPa")
+        print("Humidity: \(humidity)%")
+        print("sunrise: \(sunrise), sunset: \(sunset)")
+        print("visiablity: \(visiablity)")
+        print("mainDes: \(mainDes)")
+        print("base: \(base)")
+        
+    }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -203,6 +280,7 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
     override func viewDidAppear(_ animated: Bool) {
         updateLocationOnMap()
         hidePopUpView()
+        getWeatherInfoByCoordinate()
     }
     
     func setUpViews(){
@@ -212,20 +290,52 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
         googleMapView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
         googleMapView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
         
-        self.view.addSubview(barView)
-        barView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
-        barView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
-        barView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
-        barView.heightAnchor.constraint(equalToConstant: 80).isActive = true
+//        self.view.addSubview(barView)
+//        barView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+//        barView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+//        barView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+//        barView.heightAnchor.constraint(equalToConstant: 80).isActive = true
+//
+        
+        self.view.addSubview(leftWeatherView)
+        leftWeatherView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 60).isActive = true
+        leftWeatherView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
+        leftWeatherView.widthAnchor.constraint(equalToConstant: 120).isActive = true
+        leftWeatherView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        self.leftWeatherView.addSubview(leftWeatherIcon)
+        leftWeatherIcon.topAnchor.constraint(equalTo: self.leftWeatherView.topAnchor, constant: 5).isActive = true
+        leftWeatherIcon.leftAnchor.constraint(equalTo: self.leftWeatherView.leftAnchor, constant: 5).isActive = true
+        leftWeatherIcon.bottomAnchor.constraint(equalTo: self.leftWeatherView.bottomAnchor, constant: -5).isActive = true
+        leftWeatherIcon.widthAnchor.constraint(equalTo: self.leftWeatherIcon.heightAnchor, multiplier: 1).isActive = true
+        
+        self.leftWeatherView.addSubview(leftWeatherFahrenheitLabel)
+        leftWeatherFahrenheitLabel.rightAnchor.constraint(equalTo: self.leftWeatherView.rightAnchor, constant: -5).isActive = true
+        leftWeatherFahrenheitLabel.topAnchor.constraint(equalTo: self.leftWeatherView.topAnchor, constant: 12).isActive = true
+        leftWeatherFahrenheitLabel.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        leftWeatherFahrenheitLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        self.leftWeatherView.addSubview(leftWeatherDegreeLabel)
+        leftWeatherDegreeLabel.topAnchor.constraint(equalTo: self.leftWeatherView.topAnchor, constant: 5).isActive = true
+        leftWeatherDegreeLabel.leftAnchor.constraint(equalTo: self.leftWeatherIcon.rightAnchor, constant: 5).isActive = true
+        leftWeatherDegreeLabel.bottomAnchor.constraint(equalTo: self.leftWeatherView.bottomAnchor, constant: -5).isActive = true
+        leftWeatherDegreeLabel.rightAnchor.constraint(equalTo: self.leftWeatherFahrenheitLabel.leftAnchor, constant: 0).isActive = true
         
         self.view.addSubview(homeButton)
         homeButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
         homeButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
         homeButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        homeButton.bottomAnchor.constraint(equalTo: self.barView.bottomAnchor, constant: -5).isActive = true
+        homeButton.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 60).isActive = true
         
+        self.view.addSubview(addCityMarkerButton)
+        addCityMarkerButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -50).isActive = true
+        addCityMarkerButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -50).isActive = true
+        addCityMarkerButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        addCityMarkerButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        // Pop Up View
         self.view.addSubview(popUpWeatherDetailView)
-        popUpWeatherDetailView.topAnchor.constraint(equalTo: barView.bottomAnchor, constant: 30).isActive = true
+        popUpWeatherDetailView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 60).isActive = true
         popUpWeatherDetailView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 30).isActive = true
         popUpWeatherDetailView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -30).isActive = true
         popUpWeatherDetailView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -30).isActive = true
@@ -247,6 +357,17 @@ class MainMapViewController: UIViewController, GMSMapViewDelegate{
         weatherDeatilTableView.leftAnchor.constraint(equalTo: self.popUpWeatherDetailView.leftAnchor, constant: 10).isActive = true
         weatherDeatilTableView.rightAnchor.constraint(equalTo: self.popUpWeatherDetailView.rightAnchor, constant: -10).isActive = true
         weatherDeatilTableView.bottomAnchor.constraint(equalTo: self.dismissPopUpViewButton.topAnchor, constant: -10).isActive = true
+        
+        
+    }
+    
+    func setUpLocationAndMap(){
+        self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.locationManager.requestWhenInUseAuthorization()
+        
+        self.googleMapView.delegate = self
+        self.googleMapView.isMyLocationEnabled = true
     }
     
     func setUpTableView(){
