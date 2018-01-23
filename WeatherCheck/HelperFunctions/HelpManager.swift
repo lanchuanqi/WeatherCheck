@@ -56,9 +56,17 @@ struct HelpManager{
     }
     
     
-    static func convertEpochToReadableTime(epoch: Int) -> NSDate{
-        let date = NSDate(timeIntervalSince1970: 1415637900)
-        return date
+    static func convertEpochToReadableTime(epoch: Double) -> String{
+        let date = Date(timeIntervalSince1970: epoch)
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = DateFormatter.Style.medium //Set time style
+        dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
+        dateFormatter.timeZone = NSTimeZone.local
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
+        let minutes = calendar.component(.minute, from: date)
+        
+        return "\(hour):\(minutes)"
     }
     
     static func getWeatherIconBasedOnWeatherConditionCode(code: Int) -> UIImage{
@@ -96,8 +104,81 @@ struct HelpManager{
         }
     }
     
+//        func getCityNameByCoordinate(location: CLLocationCoordinate2D, completion: @escaping (String?) -> ()){
+//            let currentLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+//    
+//            userDefaultLanguages = UserDefaults.standard.object(forKey: "AppleLanguages") as? [AnyHashable]
+//            UserDefaults.standard.set(["en"], forKey: "AppleLanguages")
+//            let geoCoder = CLGeocoder()
+//            geoCoder.reverseGeocodeLocation(currentLocation) { (resultMarker, error) in
+//                UserDefaults.standard.set(self.userDefaultLanguages, forKey: "AppleLanguages")
+//                if let markerData = resultMarker?[0]{
+//                    if let city = markerData.locality{
+//    //                    self.todayWeatherLabel.text = "Today's Weather at " + city
+//                        completion(city)
+//                    }
+//                    else{
+//                        print("get city name failed.")
+//                        completion(nil)
+//                    }
+//                }
+//                else{
+//                    print("get marker data failed.")
+//                    completion(nil)
+//                }
+//            }
+//        }
     
+    //    func getWeatherInfoByCityName(){
+    //        guard let location = self.getCurrentLocation() else{return}
+    //        let camera = GMSCameraPosition.camera(withLatitude: (location.latitude), longitude: (location.longitude), zoom: 10.0)
+    //        self.googleMapView.animate(to: camera)
+    //        self.getCityNameByCoordinate(location: location) { (name) in
+    //            if let cityName = name{
+    //                APIHandler().getWeatherFromCityName(city: cityName, completion: { (weatherData) in
+    //                    if let data = weatherData{
+    //                        DispatchQueue.main.async {
+    //                            self.setDetailViewLabels(data: data)
+    ////                            self.weatherDeatilTableView.reloadData()
+    ////                            self.showPopUpView()
+    //                        }
+    //                    }
+    //                })
+    //            }
+    //        }
+    //    }
     
+    //    func setDetailViewLabels(data: WeatherData){
+    //        guard let base = data.base else {return}
+    //        guard let mainDes = data.weather?[0].description else {return}
+//            guard let temp = data.main?.temp else {return}
+//            guard let pressure = data.main?.pressure else {return}
+//            guard let humidity = data.main?.humidity else {return}
+//    
+//            let visiablity = data.visibility
+//            guard let windSpeed = data.wind?.speed else {return}
+//            guard let windDeg = data.wind?.deg else {return}
+//            guard let cloud = data.clouds?.all else {return}
+//            guard let sunrise = data.sys?.sunrise else {return}
+//            guard let sunset = data.sys?.sunset else {return}
+//    
+//            let fahrenheit = HelpManager.convertKelvinToFahrenheit(kelvin: temp)
+//            self.leftWeatherDegreeLabel.text = "\(Int(fahrenheit))"
+//    
+//            let windDirection = HelpManager.convertWindDegreeToDirection(degree: windDeg)
+//            let windSpeedOneDecimal = Double(round(10*windSpeed)/10)
+    //        print("\(windDirection) \(windSpeedOneDecimal)m/s")
+    //
+    //        let cloudiness = Int(cloud)
+    //        print("cloudiness: \(cloudiness)%")
+    //        print("Atmospheric pressure: \(pressure)hPa")
+    //        print("Humidity: \(humidity)%")
+    //        print("sunrise: \(sunrise), sunset: \(sunset)")
+    //        print("visiablity: \(visiablity)")
+    //        print("mainDes: \(mainDes)")
+    //        print("base: \(base)")
+    //
+    //    }
 }
 
 
