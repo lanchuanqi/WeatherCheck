@@ -61,7 +61,7 @@ struct HelpManager{
         let dateFormatter = DateFormatter()
         dateFormatter.timeStyle = DateFormatter.Style.medium //Set time style
         dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
-        dateFormatter.timeZone = NSTimeZone.local
+        dateFormatter.timeZone = NSTimeZone.system
         let calendar = Calendar.current
         let hour = calendar.component(.hour, from: date)
         let minutes = calendar.component(.minute, from: date)
@@ -71,63 +71,125 @@ struct HelpManager{
     
     static func getWeatherIconBasedOnWeatherConditionCode(code: Int) -> UIImage{
         switch code {
-        case 200 ... 233:
-            //should be Thunderstorm
-            return #imageLiteral(resourceName: "rain")
-        case 300 ... 322:
+        case 200 ..< 233:
+            //Thunderstorm
+            return #imageLiteral(resourceName: "thunderstorm")
+        case 300 ..< 322:
             //Drizzle
-            return #imageLiteral(resourceName: "rain")
-        case 500 ... 532:
+            return #imageLiteral(resourceName: "drizzle")
+        case 500 ..< 532:
             //rain
             return #imageLiteral(resourceName: "rain")
-        case 600 ... 623:
+        case 600 ..< 623:
             //snow
-            return #imageLiteral(resourceName: "snow")
-        case 701 ... 782:
+            return #imageLiteral(resourceName: "heavySnow")
+        case 701 ..< 782:
             //Atmosphere
-            return #imageLiteral(resourceName: "wind")
+            return #imageLiteral(resourceName: "fog")
         case 800:
             //clear sky
             return #imageLiteral(resourceName: "sun")
-        case 801 ... 805:
+        case 801 ..< 803:
             //clouds
+            return #imageLiteral(resourceName: "smallCloud")
+        case 803 ..< 805:
+            //broken cloud
             return #imageLiteral(resourceName: "cloud")
-        case 951 ... 963:
-            //Additional wind conditions   calm -> hurricane
-            return #imageLiteral(resourceName: "wind")
-        case 900 ... 907:
+        case 951 ..< 957:
+            //Additional wind conditions
+            return #imageLiteral(resourceName: "wind-1")
+        case 957 ..< 963:
+            //hurricane
+            return #imageLiteral(resourceName: "hurricane")
+        case 900 ..< 907:
             //Extreme conditions
-            return #imageLiteral(resourceName: "cloud")
+            return #imageLiteral(resourceName: "wind")
         default:
             //Unknown conditions
-            return #imageLiteral(resourceName: "cloud")
+            return #imageLiteral(resourceName: "sun")
         }
     }
     
-//        func getCityNameByCoordinate(location: CLLocationCoordinate2D, completion: @escaping (String?) -> ()){
-//            let currentLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
-//    
-//            userDefaultLanguages = UserDefaults.standard.object(forKey: "AppleLanguages") as? [AnyHashable]
-//            UserDefaults.standard.set(["en"], forKey: "AppleLanguages")
-//            let geoCoder = CLGeocoder()
-//            geoCoder.reverseGeocodeLocation(currentLocation) { (resultMarker, error) in
-//                UserDefaults.standard.set(self.userDefaultLanguages, forKey: "AppleLanguages")
-//                if let markerData = resultMarker?[0]{
-//                    if let city = markerData.locality{
-//    //                    self.todayWeatherLabel.text = "Today's Weather at " + city
-//                        completion(city)
-//                    }
-//                    else{
-//                        print("get city name failed.")
-//                        completion(nil)
-//                    }
-//                }
-//                else{
-//                    print("get marker data failed.")
-//                    completion(nil)
-//                }
-//            }
-//        }
+    static func getWeatherMarkerIconBasedOnWeatherConditionCode(code: Int) -> UIImage{
+        switch code {
+        case 200 ..< 233:
+            //Thunderstorm
+            return #imageLiteral(resourceName: "markerThunderstorm")
+        case 300 ..< 322:
+            //Drizzle
+            return #imageLiteral(resourceName: "markerDizzle")
+        case 500 ..< 532:
+            //rain
+            return #imageLiteral(resourceName: "rain")
+        case 600 ..< 623:
+            //snow
+            return #imageLiteral(resourceName: "markerHeavySnow")
+        case 701 ..< 782:
+            //Atmosphere
+            return #imageLiteral(resourceName: "markerFog")
+        case 800:
+            //clear sky
+            return #imageLiteral(resourceName: "sun")
+        case 801 ..< 803:
+            //clouds
+            return #imageLiteral(resourceName: "markerSmallCloud")
+        case 803 ..< 805:
+            //broken cloud
+            return #imageLiteral(resourceName: "cloud")
+        case 951 ..< 957:
+            //Additional wind conditions
+            return #imageLiteral(resourceName: "markerWind")
+        case 957 ..< 963:
+            //hurricane
+            return #imageLiteral(resourceName: "markerHurricane")
+        case 900 ..< 907:
+            //Extreme conditions
+            return #imageLiteral(resourceName: "wind")
+        default:
+            //Unknown conditions
+            return #imageLiteral(resourceName: "sun")
+        }
+    }
+    
+    static func getWeatherBackgroundImageBasedOnWeatherConditionCode(code: Int) -> UIImage{
+        switch code {
+        case 200 ... 233:
+            //Thunderstorm leibao
+            return #imageLiteral(resourceName: "sunBG")
+        case 300 ... 322:
+            //Drizzle  xiaoyu
+            return #imageLiteral(resourceName: "sunBG")
+        case 500 ... 532:
+            //rain   dayu
+            return #imageLiteral(resourceName: "sunBG")
+        case 600 ... 623:
+            //snow   xiaxue
+            return #imageLiteral(resourceName: "sunBG")
+        case 701 ... 782:
+            //Atmosphere wu
+            return #imageLiteral(resourceName: "sunBG")
+        case 800:
+            //clear sky  qingtian
+            return #imageLiteral(resourceName: "sunBG")
+        case 801 ... 805:
+            //clouds   shaoyun
+            return #imageLiteral(resourceName: "sunBG")
+        case 951 ... 957:
+            //Additional wind conditions   calm  weifeng
+            return #imageLiteral(resourceName: "sunBG")
+        case 957 ... 963:
+            //hurricane
+            return #imageLiteral(resourceName: "sunBG")
+        case 900 ... 907:
+            //Extreme conditions
+            return #imageLiteral(resourceName: "sunBG")
+        default:
+            //Unknown conditions
+            return #imageLiteral(resourceName: "sunBG")
+        }
+    }
+    
+    
     
     //    func getWeatherInfoByCityName(){
     //        guard let location = self.getCurrentLocation() else{return}
@@ -179,6 +241,29 @@ struct HelpManager{
     //        print("base: \(base)")
     //
     //    }
+    
+//    func getCityNameByCoordinate(location: CLLocationCoordinate2D, completion: @escaping (String?) -> ()){
+//        let currentLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+//        userDefaultLanguages = UserDefaults.standard.object(forKey: "AppleLanguages") as? [AnyHashable]
+//        UserDefaults.standard.set(["en"], forKey: "AppleLanguages")
+//        let geoCoder = CLGeocoder()
+//        geoCoder.reverseGeocodeLocation(currentLocation) { (resultMarker, error) in
+//            UserDefaults.standard.set(self.userDefaultLanguages, forKey: "AppleLanguages")
+//            if let markerData = resultMarker?[0]{
+//                if let city = markerData.locality{
+//                    completion(city)
+//                }
+//                else{
+//                    print("get city name failed.")
+//                    completion(nil)
+//                }
+//            }
+//            else{
+//                print("get marker data failed.")
+//                completion(nil)
+//            }
+//        }
+//    }
 }
 
 

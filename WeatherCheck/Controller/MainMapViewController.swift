@@ -81,17 +81,6 @@ class MainMapViewController: UIViewController{
         }
     }
     
-    var homeButton: UIButton = {
-        var button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(homeButtonClicked), for: .touchUpInside)
-        button.setImage(#imageLiteral(resourceName: "logo"), for: .normal)
-        return button
-    }()
-    
-    @objc func homeButtonClicked(sender: UIButton){
-        print("home button clicked")
-    }
     
     var searchButton: UIButton = {
         var button = UIButton()
@@ -380,7 +369,9 @@ class MainMapViewController: UIViewController{
     }
     
     @objc func tapLeftWeatherViewShowPopUpView(_sender: UITapGestureRecognizer){
-        guard let data = self.weatherData else {return}
+        guard let data = self.weatherData else {
+            self.getWeatherInfoByCoordinate()
+            return}
         setUpPopUpViewUI(data: data)
     }
     
@@ -390,7 +381,9 @@ class MainMapViewController: UIViewController{
     func showPopUpView(){
         self.popUpWeatherDetailView.isHidden = false
     }
+    
     func setUpPopUpViewUI(data: WeatherData){
+        guard let weatherCode = data.weather?[0].id else {return}
         guard let mainDes = data.weather?[0].main else {return}
         guard let temp = data.main?.temp else {return}
         guard let pressure = data.main?.pressure else {return}
@@ -409,6 +402,7 @@ class MainMapViewController: UIViewController{
         let sunrise = HelpManager.convertEpochToReadableTime(epoch: Double(sunRise))
         let sunset = HelpManager.convertEpochToReadableTime(epoch: Double(sunSet))
         
+        self.popUpWeatherImageView.image = HelpManager.getWeatherBackgroundImageBasedOnWeatherConditionCode(code: weatherCode)
         self.popUpCityNameLabel.text = "\(cityName)"
         self.popUpDegreeLabel.text = "\(fahrenheit)"
         self.popUpWindDetailLabel.text = "\(windDirection) \(windSpeedOneDecimal)m/s"
@@ -419,6 +413,7 @@ class MainMapViewController: UIViewController{
         self.popUpDescriptionDetailLabel.text = mainDes
         self.popUpSunriseDetailLabel.text = sunrise
         self.popUpSunsetDetailLabel.text = sunset
+        
         
         self.showPopUpView()
     }
@@ -440,10 +435,9 @@ class MainMapViewController: UIViewController{
         }
     }
     
-    
     func getWeatherInfoByCoordinate(){
         guard let location = self.getCurrentLocation() else {return}
-        APIHandler().getWeatherFromLocationCoordinates(lat: location.latitude, long: location.longitude) { (data) in
+        APIHandler().getWeatherFromLocationCoordinates(lat: Double(round(10*location.latitude)/10), long: Double(round(10*location.longitude)/10)) { (data) in
             if let weatherData = data{
                 self.weatherData = weatherData
                 DispatchQueue.main.async {
@@ -509,17 +503,22 @@ class MainMapViewController: UIViewController{
         self.leftWeatherView.addGestureRecognizer(showPopUpViewGesture)
         
         // seach button and plus button
+//        self.view.addSubview(searchButton)
+//        searchButton.centerYAnchor.constraint(equalTo: self.leftWeatherView.centerYAnchor).isActive = true
+//        searchButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -40).isActive = true
+//        searchButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
+//        searchButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
         self.view.addSubview(addCityMarkerButton)
         addCityMarkerButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -50).isActive = true
         addCityMarkerButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -50).isActive = true
         addCityMarkerButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         addCityMarkerButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+//        addCityMarkerButton.centerYAnchor.constraint(equalTo: self.leftWeatherView.centerYAnchor).isActive = true
+//        addCityMarkerButton.rightAnchor.constraint(equalTo: self.searchButton.leftAnchor, constant: -10).isActive = true
         
-        self.view.addSubview(searchButton)
-        searchButton.centerYAnchor.constraint(equalTo: self.leftWeatherView.centerYAnchor).isActive = true
-        searchButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -40).isActive = true
-        searchButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        searchButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+
         
         // Pop Up View
         self.view.addSubview(popUpWeatherDetailView)
@@ -709,6 +708,9 @@ class MainMapViewController: UIViewController{
         
         self.googleMapView.delegate = self
         self.googleMapView.isMyLocationEnabled = true
+//        self.googleMapView.settings.compassButton = true
+//        self.googleMapView.settings.myLocationButton = true
+//        self.googleMapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: 40, right: UIScreen.main.bounds.width-100)
     }
     
     
@@ -737,11 +739,9 @@ extension MainMapViewController: CLLocationManagerDelegate{
 extension MainMapViewController: GMSMapViewDelegate{
     func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
         if self.addMarkerMood{
-            print(coordinate.latitude, coordinate.longitude)
             APIHandler().getWeatherFromLocationCoordinates(lat: coordinate.latitude, long: coordinate.longitude, completion: { (data) in
                 if let weatherData = data{
-                    print("\(String(describing: weatherData.main?.temp))")
-                    self.addMarkerToGoogleMap(mapView, coordinate: coordinate)
+                    self.addMarkerToGoogleMap(mapView, coordinate: coordinate, data: weatherData)
                 }
             })
             self.addMarkerMood = false
@@ -749,13 +749,22 @@ extension MainMapViewController: GMSMapViewDelegate{
         }
     }
     
-    private func addMarkerToGoogleMap(_ mapView: GMSMapView, coordinate: CLLocationCoordinate2D){
+    private func addMarkerToGoogleMap(_ mapView: GMSMapView, coordinate: CLLocationCoordinate2D, data: WeatherData){
         let marker = GMSMarker(position: coordinate)
+        guard let weatheCode = data.weather?[0].id else {return}
         marker.map = mapView
-        marker.icon = #imageLiteral(resourceName: "wind")
+        marker.userData = data
+        marker.icon = HelpManager.getWeatherMarkerIconBasedOnWeatherConditionCode(code: weatheCode)
         marker.appearAnimation = .pop
-        
     }
+    
+    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+        guard let weatherDetail = marker.userData as? WeatherData else {return false}
+        self.setUpPopUpViewUI(data: weatherDetail)
+        return true
+    }
+
+    
 }
 
 
