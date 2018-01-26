@@ -120,7 +120,7 @@ struct HelpManager{
             return #imageLiteral(resourceName: "markerDizzle")
         case 500 ..< 532:
             //rain
-            return #imageLiteral(resourceName: "rain")
+            return #imageLiteral(resourceName: "markerRain")
         case 600 ..< 623:
             //snow
             return #imageLiteral(resourceName: "markerHeavySnow")
@@ -129,13 +129,13 @@ struct HelpManager{
             return #imageLiteral(resourceName: "markerFog")
         case 800:
             //clear sky
-            return #imageLiteral(resourceName: "sun")
+            return #imageLiteral(resourceName: "markerSun")
         case 801 ..< 803:
             //clouds
             return #imageLiteral(resourceName: "markerSmallCloud")
         case 803 ..< 805:
             //broken cloud
-            return #imageLiteral(resourceName: "cloud")
+            return #imageLiteral(resourceName: "markerCloud")
         case 951 ..< 957:
             //Additional wind conditions
             return #imageLiteral(resourceName: "markerWind")
@@ -144,10 +144,10 @@ struct HelpManager{
             return #imageLiteral(resourceName: "markerHurricane")
         case 900 ..< 907:
             //Extreme conditions
-            return #imageLiteral(resourceName: "wind")
+            return #imageLiteral(resourceName: "markerWind-1")
         default:
             //Unknown conditions
-            return #imageLiteral(resourceName: "sun")
+            return #imageLiteral(resourceName: "markerSun")
         }
     }
     

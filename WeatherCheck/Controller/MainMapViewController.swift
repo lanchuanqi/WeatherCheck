@@ -99,7 +99,7 @@ class MainMapViewController: UIViewController{
         var view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 20
-        view.alpha = 0.5
+        view.alpha = 0.8
         view.backgroundColor = UIColor.white
         return view
     }()
@@ -122,6 +122,25 @@ class MainMapViewController: UIViewController{
         self.longPressAddMarkerView.isHidden = false
         self.longPressAddMarkerLabel.isHidden = false
     }
+    
+    
+    //Error label
+    var apiCallFailedErrorLabel: UILabel = {
+        var label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "HelveticaNeue-Light", size: 15)
+        label.text = "Can't get the weather info on that area, please try again later."
+        label.minimumScaleFactor = 0.5
+        label.textAlignment = .center
+        label.backgroundColor = UIColor.white
+        label.textColor = #colorLiteral(red: 0.2145102024, green: 0.5638168454, blue: 0.8173175454, alpha: 1)
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 15
+        label.numberOfLines = 3
+        return label
+    }()
+    
+    
     
     //detail page
     var popUpWeatherDetailView: UIView = {
@@ -349,10 +368,6 @@ class MainMapViewController: UIViewController{
         label.textAlignment = .center
         return label
     }()
-    
-    
-    
-    
     var popUpViewCloseButton: UIButton = {
         var button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -465,6 +480,7 @@ class MainMapViewController: UIViewController{
         hidePopUpView()
         hideLongPressViews()
         getWeatherInfoByCoordinate()
+        self.apiCallFailedErrorLabel.alpha = 0
     }
     
     func setUpViews(){
@@ -512,11 +528,10 @@ class MainMapViewController: UIViewController{
         self.view.addSubview(addCityMarkerButton)
         addCityMarkerButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -50).isActive = true
         addCityMarkerButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -50).isActive = true
-        addCityMarkerButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        addCityMarkerButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
 //        addCityMarkerButton.centerYAnchor.constraint(equalTo: self.leftWeatherView.centerYAnchor).isActive = true
-//        addCityMarkerButton.rightAnchor.constraint(equalTo: self.searchButton.leftAnchor, constant: -10).isActive = true
-        
+//        addCityMarkerButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -40).isActive = true
+        addCityMarkerButton.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        addCityMarkerButton.heightAnchor.constraint(equalToConstant: 60).isActive = true
         
 
         
@@ -699,6 +714,12 @@ class MainMapViewController: UIViewController{
         longPressAddMarkerLabel.centerYAnchor.constraint(equalTo: self.longPressAddMarkerView.centerYAnchor).isActive = true
         longPressAddMarkerLabel.leftAnchor.constraint(equalTo: self.longPressAddMarkerView.leftAnchor, constant: 5).isActive = true
         longPressAddMarkerLabel.rightAnchor.constraint(equalTo: self.longPressAddMarkerView.rightAnchor, constant: -5).isActive = true
+        
+        self.view.addSubview(apiCallFailedErrorLabel)
+        apiCallFailedErrorLabel.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        apiCallFailedErrorLabel.topAnchor.constraint(equalTo: self.longPressAddMarkerView.bottomAnchor, constant: 20).isActive = true
+        apiCallFailedErrorLabel.leftAnchor.constraint(equalTo: self.longPressAddMarkerView.leftAnchor, constant: 5).isActive = true
+        apiCallFailedErrorLabel.rightAnchor.constraint(equalTo: self.longPressAddMarkerView.rightAnchor, constant: -5).isActive = true
     }
     
     func setUpLocationAndMap(){
@@ -710,7 +731,8 @@ class MainMapViewController: UIViewController{
         self.googleMapView.isMyLocationEnabled = true
 //        self.googleMapView.settings.compassButton = true
 //        self.googleMapView.settings.myLocationButton = true
-//        self.googleMapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: 40, right: UIScreen.main.bounds.width-100)
+//        self.googleMapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 120)
+        self.googleMapView.mapType = .terrain
     }
     
     
@@ -743,9 +765,20 @@ extension MainMapViewController: GMSMapViewDelegate{
                 if let weatherData = data{
                     self.addMarkerToGoogleMap(mapView, coordinate: coordinate, data: weatherData)
                 }
+                else{
+                    self.showErrorMessageForThreeSecond()
+                }
             })
             self.addMarkerMood = false
             self.hideLongPressViews()
+        }
+    }
+    private func showErrorMessageForThreeSecond(){
+        DispatchQueue.main.async {
+            self.apiCallFailedErrorLabel.alpha = 1
+            UIView.animate(withDuration: 2, delay: 1, options: .allowAnimatedContent, animations: {
+                self.apiCallFailedErrorLabel.alpha = 0
+            })
         }
     }
     
@@ -759,7 +792,9 @@ extension MainMapViewController: GMSMapViewDelegate{
     }
     
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
-        guard let weatherDetail = marker.userData as? WeatherData else {return false}
+        guard let weatherDetail = marker.userData as? WeatherData else {
+            print("can't get weather detail")
+            return false}
         self.setUpPopUpViewUI(data: weatherDetail)
         return true
     }
