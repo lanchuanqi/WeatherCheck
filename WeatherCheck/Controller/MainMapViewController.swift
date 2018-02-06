@@ -14,6 +14,15 @@ import MapKit
 
 
 class MainMapViewController: UIViewController{
+    //user setting
+    let defaults = UserDefaults.standard
+    var FahrenheitORCelsius = 1{
+        didSet{
+            print("hahahaha")
+        }
+    }
+    
+    
     var locationManager = CLLocationManager()
     var userDefaultLanguages: [AnyHashable]?
     var weatherData: WeatherData?
@@ -24,12 +33,15 @@ class MainMapViewController: UIViewController{
     //main page
     var googleMapView: GMSMapView = {
         var mapview = GMSMapView()
-        mapview.translatesAutoresizingMaskIntoConstraints = false
+        mapview.isMyLocationEnabled = true
+        //        self.googleMapView.settings.compassButton = true
+        //        self.googleMapView.settings.myLocationButton = true
+        //        self.googleMapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 120)
+        mapview.mapType = .terrain
         return mapview
     }()
     var leftWeatherView: UIView = {
         var view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor.white
         view.layer.cornerRadius = 15
         return view
@@ -82,16 +94,16 @@ class MainMapViewController: UIViewController{
     }
     
     
-    var searchButton: UIButton = {
+    var settingButton: UIButton = {
         var button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(#imageLiteral(resourceName: "search"), for: .normal)
-        button.addTarget(self, action: #selector(searchButtonClicked), for: .touchUpInside)
+        button.addTarget(self, action: #selector(settingButtonClicked), for: .touchUpInside)
         return button
     }()
     
-    @objc func searchButtonClicked(sender: UIButton){
-        print("search button clicked")
+    @objc func settingButtonClicked(sender: UIButton){
+        print("setting button clicked")
     }
     
     //add marker view and label
@@ -156,7 +168,7 @@ class MainMapViewController: UIViewController{
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 15
         imageView.contentMode = .scaleAspectFill
-        imageView.image = #imageLiteral(resourceName: "sunBG")
+        imageView.image = #imageLiteral(resourceName: "BGsun")
         return imageView
     }()
     var popUpCityNameLabel: UILabel = {
@@ -469,13 +481,13 @@ class MainMapViewController: UIViewController{
         self.leftWeatherIcon.image = HelpManager.getWeatherIconBasedOnWeatherConditionCode(code: weatherId)
     }
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpViews()
         setUpLocationAndMap()
     }
     override func viewDidAppear(_ animated: Bool) {
+        getUserSettings()
         updateLocationOnMap()
         hidePopUpView()
         hideLongPressViews()
@@ -485,17 +497,11 @@ class MainMapViewController: UIViewController{
     
     func setUpViews(){
         self.view.addSubview(googleMapView)
-        googleMapView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
-        googleMapView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
-        googleMapView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
-        googleMapView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        googleMapView.anchor(top: self.view.topAnchor, leading: self.view.leadingAnchor, trailing: self.view.trailingAnchor, bottom: self.view.bottomAnchor)
         
         //left weather view and label
         self.view.addSubview(leftWeatherView)
-        leftWeatherView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 60).isActive = true
-        leftWeatherView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
-        leftWeatherView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        leftWeatherView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        leftWeatherView.anchor(top: self.view.topAnchor, leading: self.view.leadingAnchor, trailing: nil, bottom: nil, padding: UIEdgeInsets.init(top: 60, left: 20, bottom: 0, right: 0), size: CGSize.init(width: 100, height: 40))
         
         self.leftWeatherView.addSubview(leftWeatherIcon)
         leftWeatherIcon.topAnchor.constraint(equalTo: self.leftWeatherView.topAnchor, constant: 5).isActive = true
@@ -518,35 +524,23 @@ class MainMapViewController: UIViewController{
         let showPopUpViewGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapLeftWeatherViewShowPopUpView))
         self.leftWeatherView.addGestureRecognizer(showPopUpViewGesture)
         
-        // seach button and plus button
-//        self.view.addSubview(searchButton)
-//        searchButton.centerYAnchor.constraint(equalTo: self.leftWeatherView.centerYAnchor).isActive = true
-//        searchButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -40).isActive = true
-//        searchButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
-//        searchButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        // setting button and plus button
+        self.view.addSubview(settingButton)
+        settingButton.centerYAnchor.constraint(equalTo: self.leftWeatherView.centerYAnchor).isActive = true
+        settingButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -40).isActive = true
+        settingButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        settingButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
         self.view.addSubview(addCityMarkerButton)
-        addCityMarkerButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -50).isActive = true
-        addCityMarkerButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -50).isActive = true
-//        addCityMarkerButton.centerYAnchor.constraint(equalTo: self.leftWeatherView.centerYAnchor).isActive = true
-//        addCityMarkerButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -40).isActive = true
-        addCityMarkerButton.widthAnchor.constraint(equalToConstant: 60).isActive = true
-        addCityMarkerButton.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        addCityMarkerButton.anchor(top: nil, leading: nil, trailing: self.view.trailingAnchor, bottom: self.view.bottomAnchor, padding: UIEdgeInsets.init(top: 0, left: 0, bottom: 50, right: 50), size: CGSize.init(width: 60, height: 60))
         
-
         
         // Pop Up View
         self.view.addSubview(popUpWeatherDetailView)
-        popUpWeatherDetailView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 60).isActive = true
-        popUpWeatherDetailView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 30).isActive = true
-        popUpWeatherDetailView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -30).isActive = true
-        popUpWeatherDetailView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -30).isActive = true
+        popUpWeatherDetailView.anchor(top: self.view.topAnchor, leading: self.view.leadingAnchor, trailing: self.view.trailingAnchor, bottom: self.view.bottomAnchor, padding: UIEdgeInsets.init(top: 60, left: 30, bottom: 30, right: 30), size: .zero)
         
         self.popUpWeatherDetailView.addSubview(popUpWeatherImageView)
-        popUpWeatherImageView.topAnchor.constraint(equalTo: self.popUpWeatherDetailView.topAnchor).isActive = true
-        popUpWeatherImageView.leftAnchor.constraint(equalTo: self.popUpWeatherDetailView.leftAnchor).isActive = true
-        popUpWeatherImageView.rightAnchor.constraint(equalTo: self.popUpWeatherDetailView.rightAnchor).isActive = true
-        popUpWeatherImageView.bottomAnchor.constraint(equalTo: self.popUpWeatherDetailView.bottomAnchor).isActive = true
+        popUpWeatherImageView.anchor(top: self.popUpWeatherDetailView.topAnchor, leading: self.popUpWeatherDetailView.leadingAnchor, trailing: self.popUpWeatherDetailView.trailingAnchor, bottom: self.popUpWeatherDetailView.bottomAnchor)
         
         self.popUpWeatherDetailView.addSubview(popUpCityNameLabel)
         popUpCityNameLabel.topAnchor.constraint(equalTo: self.popUpWeatherDetailView.topAnchor, constant: 5).isActive = true
@@ -726,15 +720,18 @@ class MainMapViewController: UIViewController{
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.locationManager.requestWhenInUseAuthorization()
-        
+
         self.googleMapView.delegate = self
-        self.googleMapView.isMyLocationEnabled = true
-//        self.googleMapView.settings.compassButton = true
-//        self.googleMapView.settings.myLocationButton = true
-//        self.googleMapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 120)
-        self.googleMapView.mapType = .terrain
     }
-    
+    func getUserSettings(){
+        let degreeSetting = self.defaults.integer(forKey: "ForC")
+        if degreeSetting == 0{
+            self.defaults.set(1, forKey: "ForC")
+        }
+        else{
+            self.FahrenheitORCelsius = degreeSetting
+        }
+    }
     
     
 }
@@ -798,9 +795,47 @@ extension MainMapViewController: GMSMapViewDelegate{
         self.setUpPopUpViewUI(data: weatherDetail)
         return true
     }
-
-    
 }
+extension UIView{
+    func anchor(top: NSLayoutYAxisAnchor?, leading: NSLayoutXAxisAnchor?, trailing: NSLayoutXAxisAnchor?, bottom: NSLayoutYAxisAnchor?, padding: UIEdgeInsets = .zero, size: CGSize = .zero){
+        self.translatesAutoresizingMaskIntoConstraints = false
+        if let top = top{
+            self.topAnchor.constraint(equalTo: top, constant: padding.top).isActive = true
+        }
+        if let leading = leading{
+            self.leadingAnchor.constraint(equalTo: leading, constant: padding.left).isActive = true
+        }
+        if let trailing = trailing{
+            self.trailingAnchor.constraint(equalTo: trailing, constant: -padding.right).isActive = true
+        }
+        if let bottom = bottom {
+            self.bottomAnchor.constraint(equalTo: bottom, constant: -padding.bottom).isActive = true
+        }
+        if size.width != 0{
+            self.widthAnchor.constraint(equalToConstant: size.width).isActive = true
+        }
+        if size.height != 0{
+            self.heightAnchor.constraint(equalToConstant: size.height).isActive = true
+        }
+        
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
