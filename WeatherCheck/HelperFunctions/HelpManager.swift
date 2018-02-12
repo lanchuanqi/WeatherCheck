@@ -52,9 +52,20 @@ struct HelpManager{
     }
     
     static func convertKelvinToFahrenheit(kelvin: Double) -> Int{
-        return Int(kelvin * 9/5 - 459.67)
+        return Int(kelvin * 1.8 - 459.67)
     }
     
+    static func convertKelvinToCelsius(kelvin: Double) -> Int{
+        return Int(kelvin - 273.15)
+    }
+    
+    static func convertCelsiusToFahrenheit(celsius: Double) -> Int{
+        return Int(celsius * 1.8 - 32)
+    }
+    
+    static func convertFahrenheitToCelsius(fahrenheit: Double) -> Int{
+        return Int((fahrenheit - 32)/1.8)
+    }
     
     static func convertEpochToReadableTime(epoch: Double) -> String{
         let date = Date(timeIntervalSince1970: epoch)

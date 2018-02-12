@@ -16,12 +16,32 @@ import MapKit
 class MainMapViewController: UIViewController{
     //user setting
     let defaults = UserDefaults.standard
+    var currentUnit = 1
+    
+    // 1 is Fahrenheit, 2 is Celsius
     var FahrenheitORCelsius = 1{
         didSet{
-            print("hahahaha")
+            self.degreeUnitChanged()
         }
     }
-    
+    private func degreeUnitChanged(){
+        if self.FahrenheitORCelsius == 1{
+            guard let data = self.weatherData else {
+                self.getWeatherInfoByCoordinate()
+                return}
+            guard let temp = data.main?.temp else {return}
+            self.leftWeatherDegreeLabel.text = String(HelpManager.convertKelvinToFahrenheit(kelvin: temp))
+            self.leftWeatherFahrenheitLabel.text = "°F"
+        }
+        else if self.FahrenheitORCelsius == 2{
+            guard let data = self.weatherData else {
+                self.getWeatherInfoByCoordinate()
+                return}
+            guard let temp = data.main?.temp else {return}
+            self.leftWeatherDegreeLabel.text = String(HelpManager.convertKelvinToCelsius(kelvin: temp))
+            self.leftWeatherFahrenheitLabel.text = "°C"
+        }
+    }
     
     var locationManager = CLLocationManager()
     var userDefaultLanguages: [AnyHashable]?
@@ -93,6 +113,61 @@ class MainMapViewController: UIViewController{
         }
     }
     
+    // settings view
+    var settingView: UIView = {
+        var view = UIView()
+        view.backgroundColor = #colorLiteral(red: 0, green: 0.6267040372, blue: 0.8887307048, alpha: 1)
+        view.layer.cornerRadius = 15
+        return view
+    }()
+    var settingUnitLabel: UILabel = {
+        var label = UILabel()
+        label.font = UIFont(name: "HelveticaNeue-Medium", size: 15)
+        label.minimumScaleFactor = 0.5
+        label.textColor = UIColor.white
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 15
+        label.text = "Unit: "
+        return label
+    }()
+    var settingFLabel: UILabel = {
+        var label = UILabel()
+        label.text = "°F"
+        label.font = UIFont(name: "HelveticaNeue-Medium", size: 15)
+        label.textColor = UIColor.white
+        return label
+    }()
+    var settingSwitch: UISwitch = {
+        var s = UISwitch()
+        s.isUserInteractionEnabled = true
+        s.addTarget(self, action: #selector(settingSwitchChangeState), for: .valueChanged)
+        return s
+    }()
+    @objc func settingSwitchChangeState(sender: UISwitch){
+        //°F is on, °C is off
+        if sender.isOn{
+            self.FahrenheitORCelsius = 1
+            self.settingFLabel.text = "°F"
+        }
+        else{
+            self.FahrenheitORCelsius = 2
+            self.settingFLabel.text = "°C"
+        }
+    }
+    
+    var settingCloseButton: UIButton = {
+        var button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Close", for: .normal)
+        button.addTarget(self, action: #selector(settingCloseButtonClicked), for: .touchUpInside)
+        button.backgroundColor = UIColor.clear
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont(name: "HelveticaNeue-Medium", size: 20)
+        return button
+    }()
+    @objc func settingCloseButtonClicked(sender: UIButton){
+        self.hideSettingView()
+    }
     
     var settingButton: UIButton = {
         var button = UIButton()
@@ -103,7 +178,7 @@ class MainMapViewController: UIViewController{
     }()
     
     @objc func settingButtonClicked(sender: UIButton){
-        print("setting button clicked")
+        self.showSettingView()
     }
     
     //add marker view and label
@@ -423,7 +498,16 @@ class MainMapViewController: UIViewController{
         guard let sunRise = data.sys?.sunrise else {return}
         guard let sunSet = data.sys?.sunset else {return}
         
-        let fahrenheit = HelpManager.convertKelvinToFahrenheit(kelvin: temp)
+        var fahrenheit = 0
+        if self.FahrenheitORCelsius == 1{
+            fahrenheit = HelpManager.convertKelvinToFahrenheit(kelvin: temp)
+            self.popUpViewFahrenheitLabel.text = "°F"
+        }
+        else if self.FahrenheitORCelsius == 2{
+            fahrenheit = HelpManager.convertKelvinToCelsius(kelvin: temp)
+            self.popUpViewFahrenheitLabel.text = "°C"
+        }
+        
         let windDirection = HelpManager.convertWindDegreeToDirection(degree: windDeg)
         let windSpeedOneDecimal = Double(round(10*windSpeed)/10)
         let sunrise = HelpManager.convertEpochToReadableTime(epoch: Double(sunRise))
@@ -477,10 +561,29 @@ class MainMapViewController: UIViewController{
     func updateMainUIBasedOnWeatherData(data: WeatherData){
         guard let weatherId = data.weather?[0].id else {return}
         guard let temp = data.main?.temp else {return}
-        self.leftWeatherDegreeLabel.text = String(HelpManager.convertKelvinToFahrenheit(kelvin: temp))
+        if self.FahrenheitORCelsius == 1{
+            self.leftWeatherDegreeLabel.text = String(HelpManager.convertKelvinToFahrenheit(kelvin: temp))
+        }
+        else{
+            self.leftWeatherDegreeLabel.text = String(HelpManager.convertKelvinToCelsius(kelvin: temp))
+        }
         self.leftWeatherIcon.image = HelpManager.getWeatherIconBasedOnWeatherConditionCode(code: weatherId)
     }
 
+    func hideSettingView(){
+        self.settingView.isHidden = true
+    }
+    func showSettingView(){
+        if self.FahrenheitORCelsius == 1{
+            self.settingSwitch.setOn(true, animated: false)
+        }
+        else{
+            self.settingSwitch.setOn(false, animated: false)
+        }
+        
+        self.settingView.isHidden = false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpViews()
@@ -491,6 +594,7 @@ class MainMapViewController: UIViewController{
         updateLocationOnMap()
         hidePopUpView()
         hideLongPressViews()
+        hideSettingView()
         getWeatherInfoByCoordinate()
         self.apiCallFailedErrorLabel.alpha = 0
     }
@@ -534,6 +638,24 @@ class MainMapViewController: UIViewController{
         self.view.addSubview(addCityMarkerButton)
         addCityMarkerButton.anchor(top: nil, leading: nil, trailing: self.view.trailingAnchor, bottom: self.view.bottomAnchor, padding: UIEdgeInsets.init(top: 0, left: 0, bottom: 50, right: 50), size: CGSize.init(width: 60, height: 60))
         
+        // settings view
+        self.view.addSubview(settingView)
+        settingView.anchor(top: self.view.topAnchor, leading: self.view.leadingAnchor, trailing: self.view.trailingAnchor, bottom: nil, padding: UIEdgeInsets.init(top: 150, left: 40, bottom: 0, right: 40), size: CGSize.init(width: 0, height: 200))
+        
+        self.settingView.addSubview(settingUnitLabel)
+        settingUnitLabel.anchor(top: settingView.topAnchor, leading: settingView.leadingAnchor, trailing: nil, bottom: nil, padding: UIEdgeInsets.init(top: 20, left: 20, bottom: 0, right: 0), size: CGSize.init(width: 50, height: 30))
+        
+        self.settingView.addSubview(settingFLabel)
+        settingFLabel.anchor(top: settingView.topAnchor, leading: settingUnitLabel.trailingAnchor, trailing: nil, bottom: nil, padding: UIEdgeInsets.init(top: 20, left: 20, bottom: 0, right: 0), size: CGSize.init(width: 20, height: 30))
+        
+        self.settingView.addSubview(settingSwitch)
+        settingSwitch.anchor(top: settingView.topAnchor, leading: nil, trailing: self.settingView.trailingAnchor, bottom: nil, padding: UIEdgeInsets.init(top: 20, left: 0, bottom: 0, right: 20), size: CGSize.init(width: 50, height: 30))
+        
+        self.settingView.addSubview(settingCloseButton)
+        settingCloseButton.bottomAnchor.constraint(equalTo: self.settingView.bottomAnchor, constant: -20).isActive = true
+        settingCloseButton.centerXAnchor.constraint(equalTo: self.settingView.centerXAnchor).isActive = true
+        settingCloseButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        settingCloseButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
         
         // Pop Up View
         self.view.addSubview(popUpWeatherDetailView)
@@ -563,7 +685,7 @@ class MainMapViewController: UIViewController{
         self.popUpWeatherDetailView.addSubview(popUpViewFahrenheitLabel)
         popUpViewFahrenheitLabel.topAnchor.constraint(equalTo: popUpDegreeLabel.topAnchor).isActive = true
         popUpViewFahrenheitLabel.leftAnchor.constraint(equalTo: self.popUpDegreeLabel.rightAnchor, constant: 5).isActive = true
-        popUpViewFahrenheitLabel.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        popUpViewFahrenheitLabel.widthAnchor.constraint(equalToConstant: 25).isActive = true
         popUpViewFahrenheitLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
         let popUpViewWidth = self.view.frame.size.width - 60
@@ -817,7 +939,6 @@ extension UIView{
         if size.height != 0{
             self.heightAnchor.constraint(equalToConstant: size.height).isActive = true
         }
-        
     }
 }
 
@@ -827,7 +948,13 @@ extension UIView{
 
 
 
+//known bug
 
+/*
+ 1. some marker no response when tap
+ 2. degree still is F every time open app
+ 
+ */
 
 
 
