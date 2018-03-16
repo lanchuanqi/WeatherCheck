@@ -166,16 +166,19 @@ struct HelpManager{
         switch code {
         case 200 ... 233:
             //Thunderstorm leibao
-            return #imageLiteral(resourceName: "BGsun")
+            return #imageLiteral(resourceName: "BGrain")
         case 300 ... 322:
             //Drizzle  xiaoyu
-            return #imageLiteral(resourceName: "BGsun")
+            return #imageLiteral(resourceName: "BGrain")
         case 500 ... 532:
             //rain   dayu
-            return #imageLiteral(resourceName: "BGsun")
+            return #imageLiteral(resourceName: "BGrain")
         case 600 ... 623:
             //snow   xiaxue
-            return #imageLiteral(resourceName: "BGsun")
+            return #imageLiteral(resourceName: "BGsnow")
+            
+            
+            
         case 701 ... 782:
             //Atmosphere wu
             return #imageLiteral(resourceName: "BGsun")
@@ -184,7 +187,7 @@ struct HelpManager{
             return #imageLiteral(resourceName: "BGsun")
         case 801 ... 805:
             //clouds   shaoyun
-            return #imageLiteral(resourceName: "BGsun")
+            return #imageLiteral(resourceName: "BGcloud")
         case 951 ... 957:
             //Additional wind conditions   calm  weifeng
             return #imageLiteral(resourceName: "BGsun")

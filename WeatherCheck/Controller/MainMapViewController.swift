@@ -12,11 +12,14 @@ import GoogleMaps
 import CoreLocation
 import MapKit
 
-
+var detailPageLabelColor = UIColor.white
 class MainMapViewController: UIViewController{
+
+    
     //user setting
     let defaults = UserDefaults.standard
     var currentUnit = 1
+
     
     // 1 is Fahrenheit, 2 is Celsius
     var FahrenheitORCelsius = 1{
@@ -114,6 +117,13 @@ class MainMapViewController: UIViewController{
     }
     
     // settings view
+    var settingSegmentedControl: UISegmentedControl = {
+        var control = UISegmentedControl()
+        control.insertSegment(withTitle: "°F", at: 0, animated: false)
+        control.insertSegment(withTitle: "°C", at: 1, animated: false)
+        return control
+    }()
+    
     var settingView: UIView = {
         var view = UIView()
         view.backgroundColor = #colorLiteral(red: 0, green: 0.6267040372, blue: 0.8887307048, alpha: 1)
@@ -228,7 +238,6 @@ class MainMapViewController: UIViewController{
     }()
     
     
-    
     //detail page
     var popUpWeatherDetailView: UIView = {
         var view = UIView()
@@ -250,7 +259,7 @@ class MainMapViewController: UIViewController{
         var label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Unknown"
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         label.font = UIFont(name: "HelveticaNeue", size: 16)
         label.textAlignment = .center
         return label
@@ -262,7 +271,7 @@ class MainMapViewController: UIViewController{
         label.text = "107"
         label.minimumScaleFactor = 0.5
         label.textAlignment = .right
-        label.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        label.textColor = detailPageLabelColor
         return label
     }()
     var popUpViewFahrenheitLabel: UILabel = {
@@ -270,37 +279,37 @@ class MainMapViewController: UIViewController{
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "°F"
         label.font = UIFont(name: "HelveticaNeue", size: 20)
-        label.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        label.textColor = detailPageLabelColor
         return label
     }()
     var popUpViewSeparatorView1: UIView = {
         var view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = detailPageLabelColor
         return view
     }()
     var popUpViewSeparatorView2: UIView = {
         var view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = detailPageLabelColor
         return view
     }()
     var popUpViewSeparatorView3: UIView = {
         var view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = detailPageLabelColor
         return view
     }()
     var popUpViewSeparatorView4: UIView = {
         var view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = detailPageLabelColor
         return view
     }()
     var popUpViewSeparatorView5: UIView = {
         var view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = detailPageLabelColor
         return view
     }()
     var popUpWindLabel: UILabel = {
@@ -309,7 +318,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 10)
         label.text = "Wind"
         label.textAlignment = .center
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         return label
     }()
     var popUpWindDetailLabel: UILabel = {
@@ -318,7 +327,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 16)
         label.text = "NNW 15m/s"
         label.minimumScaleFactor = 0.5
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         label.textAlignment = .center
         return label
     }()
@@ -328,7 +337,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 10)
         label.text = "Cloudiness"
         label.textAlignment = .center
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         return label
     }()
     var popUpCloudDetailLabel: UILabel = {
@@ -337,7 +346,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 16)
         label.text = "80%"
         label.minimumScaleFactor = 0.5
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         label.textAlignment = .center
         return label
     }()
@@ -347,7 +356,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 10)
         label.text = "Humidity"
         label.textAlignment = .center
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         return label
     }()
     var popUpHumidityDetailLabel: UILabel = {
@@ -356,7 +365,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 16)
         label.text = "60%"
         label.minimumScaleFactor = 0.5
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         label.textAlignment = .center
         return label
     }()
@@ -366,7 +375,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 10)
         label.text = "Pressure"
         label.textAlignment = .center
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         return label
     }()
     var popUpPressureDetailLabel: UILabel = {
@@ -375,7 +384,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 16)
         label.text = "1234 hPa"
         label.minimumScaleFactor = 0.5
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         label.textAlignment = .center
         return label
     }()
@@ -385,7 +394,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 10)
         label.text = "Visiablity"
         label.textAlignment = .center
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         return label
     }()
     var popUpVisiablityDetailLabel: UILabel = {
@@ -394,7 +403,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 16)
         label.text = "56 m"
         label.minimumScaleFactor = 0.5
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         label.textAlignment = .center
         return label
     }()
@@ -404,7 +413,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 10)
         label.text = "Description"
         label.textAlignment = .center
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         return label
     }()
     var popUpDescriptionDetailLabel: UILabel = {
@@ -413,7 +422,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 16)
         label.text = "Clouds"
         label.minimumScaleFactor = 0.5
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         label.textAlignment = .center
         return label
     }()
@@ -423,7 +432,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Bold", size: 12)
         label.text = "Sunrise"
         label.textAlignment = .center
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         return label
     }()
     var popUpSunriseDetailLabel: UILabel = {
@@ -432,7 +441,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Bold", size: 18)
         label.text = "7:10"
         label.minimumScaleFactor = 0.5
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         label.textAlignment = .center
         return label
     }()
@@ -442,7 +451,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Bold", size: 12)
         label.text = "Sunset"
         label.textAlignment = .center
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         return label
     }()
     var popUpSunsetDetailLabel: UILabel = {
@@ -451,7 +460,7 @@ class MainMapViewController: UIViewController{
         label.font = UIFont(name: "HelveticaNeue-Bold", size: 18)
         label.text = "17:20"
         label.minimumScaleFactor = 0.5
-        label.textColor = UIColor.white
+        label.textColor = detailPageLabelColor
         label.textAlignment = .center
         return label
     }()
@@ -657,6 +666,9 @@ class MainMapViewController: UIViewController{
         settingCloseButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
         settingCloseButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
         
+//        self.settingView.addSubview(settingSegmentedControl)
+//        settingSegmentedControl.anchor(top: settingUnitLabel.bottomAnchor, leading: settingView.leftAnchor, trailing: nil, bottom: nil, padding: UIEdgeInsets.init(top: 10, left: 10, bottom: 0, right: 0), size: CGSize.init(width: 100, height: 30))
+        
         // Pop Up View
         self.view.addSubview(popUpWeatherDetailView)
         popUpWeatherDetailView.anchor(top: self.view.topAnchor, leading: self.view.leadingAnchor, trailing: self.view.trailingAnchor, bottom: self.view.bottomAnchor, padding: UIEdgeInsets.init(top: 60, left: 30, bottom: 30, right: 30), size: .zero)
@@ -667,7 +679,7 @@ class MainMapViewController: UIViewController{
         self.popUpWeatherDetailView.addSubview(popUpCityNameLabel)
         popUpCityNameLabel.topAnchor.constraint(equalTo: self.popUpWeatherDetailView.topAnchor, constant: 5).isActive = true
         popUpCityNameLabel.centerXAnchor.constraint(equalTo: self.popUpWeatherDetailView.centerXAnchor).isActive = true
-        popUpCityNameLabel.widthAnchor.constraint(equalToConstant: 110).isActive = true
+        popUpCityNameLabel.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 1).isActive = true
         popUpCityNameLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         self.popUpWeatherDetailView.addSubview(popUpViewCloseButton)
