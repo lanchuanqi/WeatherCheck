@@ -181,7 +181,7 @@ struct HelpManager{
             
         case 701 ... 782:
             //Atmosphere wu
-            return #imageLiteral(resourceName: "BGsun")
+            return #imageLiteral(resourceName: "BGfog")
         case 800:
             //clear sky  qingtian
             return #imageLiteral(resourceName: "BGsun")
@@ -193,13 +193,13 @@ struct HelpManager{
             return #imageLiteral(resourceName: "BGsun")
         case 957 ... 963:
             //hurricane
-            return #imageLiteral(resourceName: "BGsun")
+            return #imageLiteral(resourceName: "BGfog")
         case 900 ... 907:
             //Extreme conditions
-            return #imageLiteral(resourceName: "BGsun")
+            return #imageLiteral(resourceName: "BGfog")
         default:
             //Unknown conditions
-            return #imageLiteral(resourceName: "BGsun")
+            return #imageLiteral(resourceName: "BGfog")
         }
     }
     

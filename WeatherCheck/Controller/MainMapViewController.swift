@@ -119,8 +119,13 @@ class MainMapViewController: UIViewController{
     // settings view
     var settingSegmentedControl: UISegmentedControl = {
         var control = UISegmentedControl()
+        control.translatesAutoresizingMaskIntoConstraints = false
         control.insertSegment(withTitle: "°F", at: 0, animated: false)
         control.insertSegment(withTitle: "°C", at: 1, animated: false)
+        control.backgroundColor = UIColor.white
+        control.tintColor = #colorLiteral(red: 0.5843137503, green: 0.8235294223, blue: 0.4196078479, alpha: 1)
+        control.layer.cornerRadius = 5
+        control.addTarget(self, action: #selector(segmentedControlChangedState), for: .valueChanged)
         return control
     }()
     
@@ -140,28 +145,13 @@ class MainMapViewController: UIViewController{
         label.text = "Unit: "
         return label
     }()
-    var settingFLabel: UILabel = {
-        var label = UILabel()
-        label.text = "°F"
-        label.font = UIFont(name: "HelveticaNeue-Medium", size: 15)
-        label.textColor = UIColor.white
-        return label
-    }()
-    var settingSwitch: UISwitch = {
-        var s = UISwitch()
-        s.isUserInteractionEnabled = true
-        s.addTarget(self, action: #selector(settingSwitchChangeState), for: .valueChanged)
-        return s
-    }()
-    @objc func settingSwitchChangeState(sender: UISwitch){
-        //°F is on, °C is off
-        if sender.isOn{
+    @objc func segmentedControlChangedState(sender: UISegmentedControl){
+        //°F is 0, °C is 1
+        if sender.selectedSegmentIndex == 0{
             self.FahrenheitORCelsius = 1
-            self.settingFLabel.text = "°F"
         }
         else{
             self.FahrenheitORCelsius = 2
-            self.settingFLabel.text = "°C"
         }
     }
     
@@ -584,10 +574,10 @@ class MainMapViewController: UIViewController{
     }
     func showSettingView(){
         if self.FahrenheitORCelsius == 1{
-            self.settingSwitch.setOn(true, animated: false)
+            self.settingSegmentedControl.selectedSegmentIndex = 0
         }
         else{
-            self.settingSwitch.setOn(false, animated: false)
+            self.settingSegmentedControl.selectedSegmentIndex = 1
         }
         
         self.settingView.isHidden = false
@@ -654,20 +644,18 @@ class MainMapViewController: UIViewController{
         self.settingView.addSubview(settingUnitLabel)
         settingUnitLabel.anchor(top: settingView.topAnchor, leading: settingView.leadingAnchor, trailing: nil, bottom: nil, padding: UIEdgeInsets.init(top: 20, left: 20, bottom: 0, right: 0), size: CGSize.init(width: 50, height: 30))
         
-        self.settingView.addSubview(settingFLabel)
-        settingFLabel.anchor(top: settingView.topAnchor, leading: settingUnitLabel.trailingAnchor, trailing: nil, bottom: nil, padding: UIEdgeInsets.init(top: 20, left: 20, bottom: 0, right: 0), size: CGSize.init(width: 20, height: 30))
-        
-        self.settingView.addSubview(settingSwitch)
-        settingSwitch.anchor(top: settingView.topAnchor, leading: nil, trailing: self.settingView.trailingAnchor, bottom: nil, padding: UIEdgeInsets.init(top: 20, left: 0, bottom: 0, right: 20), size: CGSize.init(width: 50, height: 30))
-        
         self.settingView.addSubview(settingCloseButton)
         settingCloseButton.bottomAnchor.constraint(equalTo: self.settingView.bottomAnchor, constant: -20).isActive = true
         settingCloseButton.centerXAnchor.constraint(equalTo: self.settingView.centerXAnchor).isActive = true
         settingCloseButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
         settingCloseButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
         
-//        self.settingView.addSubview(settingSegmentedControl)
-//        settingSegmentedControl.anchor(top: settingUnitLabel.bottomAnchor, leading: settingView.leftAnchor, trailing: nil, bottom: nil, padding: UIEdgeInsets.init(top: 10, left: 10, bottom: 0, right: 0), size: CGSize.init(width: 100, height: 30))
+        self.settingView.addSubview(settingSegmentedControl)
+        settingSegmentedControl.topAnchor.constraint(equalTo: settingView.topAnchor, constant: 20).isActive = true
+        settingSegmentedControl.leftAnchor.constraint(equalTo: self.settingUnitLabel.rightAnchor, constant: 10).isActive = true
+        settingSegmentedControl.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        settingSegmentedControl.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        
         
         // Pop Up View
         self.view.addSubview(popUpWeatherDetailView)
