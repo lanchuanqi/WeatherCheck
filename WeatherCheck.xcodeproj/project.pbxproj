@@ -8,16 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		0278570B200E6687000BD59A /* HelpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0278570A200E6687000BD59A /* HelpManager.swift */; };
+		028131642068845700F6AA19 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 028131632068845700F6AA19 /* GoogleService-Info.plist */; };
 		028A164C1FFD93B500E0DBAC /* WeatherDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A164B1FFD93B500E0DBAC /* WeatherDetailTableViewCell.swift */; };
 		02DEFD501FF55E9F00A890C4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD4F1FF55E9F00A890C4 /* AppDelegate.swift */; };
 		02DEFD521FF55E9F00A890C4 /* MainMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD511FF55E9F00A890C4 /* MainMapViewController.swift */; };
 		02DEFD551FF55E9F00A890C4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02DEFD531FF55E9F00A890C4 /* Main.storyboard */; };
-		02DEFD581FF55E9F00A890C4 /* WeatherCheck.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD561FF55E9F00A890C4 /* WeatherCheck.xcdatamodeld */; };
 		02DEFD5A1FF55E9F00A890C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02DEFD591FF55E9F00A890C4 /* Assets.xcassets */; };
 		02DEFD5D1FF55E9F00A890C4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02DEFD5B1FF55E9F00A890C4 /* LaunchScreen.storyboard */; };
 		02DEFD681FF55E9F00A890C4 /* WeatherCheckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD671FF55E9F00A890C4 /* WeatherCheckTests.swift */; };
 		02DEFD731FF55E9F00A890C4 /* WeatherCheckUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD721FF55E9F00A890C4 /* WeatherCheckUITests.swift */; };
-		02DEFD841FF5765200A890C4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 02DEFD831FF5765200A890C4 /* GoogleService-Info.plist */; };
 		02DEFD871FF5A0A700A890C4 /* APIHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD861FF5A0A700A890C4 /* APIHandler.swift */; };
 		02DEFD8B1FF5B3B400A890C4 /* WeatherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEFD8A1FF5B3B400A890C4 /* WeatherData.swift */; };
 /* End PBXBuildFile section */
@@ -41,12 +40,12 @@
 
 /* Begin PBXFileReference section */
 		0278570A200E6687000BD59A /* HelpManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpManager.swift; sourceTree = "<group>"; };
+		028131632068845700F6AA19 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		028A164B1FFD93B500E0DBAC /* WeatherDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDetailTableViewCell.swift; sourceTree = "<group>"; };
 		02DEFD4C1FF55E9F00A890C4 /* WeatherCheck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherCheck.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		02DEFD4F1FF55E9F00A890C4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		02DEFD511FF55E9F00A890C4 /* MainMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMapViewController.swift; sourceTree = "<group>"; };
 		02DEFD541FF55E9F00A890C4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		02DEFD571FF55E9F00A890C4 /* WeatherCheck.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WeatherCheck.xcdatamodel; sourceTree = "<group>"; };
 		02DEFD591FF55E9F00A890C4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		02DEFD5C1FF55E9F00A890C4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		02DEFD5E1FF55E9F00A890C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -56,7 +55,6 @@
 		02DEFD6E1FF55E9F00A890C4 /* WeatherCheckUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WeatherCheckUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		02DEFD721FF55E9F00A890C4 /* WeatherCheckUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCheckUITests.swift; sourceTree = "<group>"; };
 		02DEFD741FF55E9F00A890C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		02DEFD831FF5765200A890C4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		02DEFD861FF5A0A700A890C4 /* APIHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIHandler.swift; sourceTree = "<group>"; };
 		02DEFD8A1FF5B3B400A890C4 /* WeatherData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -125,8 +123,8 @@
 		02DEFD4E1FF55E9F00A890C4 /* WeatherCheck */ = {
 			isa = PBXGroup;
 			children = (
-				02DEFD831FF5765200A890C4 /* GoogleService-Info.plist */,
 				02DEFD4F1FF55E9F00A890C4 /* AppDelegate.swift */,
+				028131632068845700F6AA19 /* GoogleService-Info.plist */,
 				02DEFD5E1FF55E9F00A890C4 /* Info.plist */,
 				02DEFD591FF55E9F00A890C4 /* Assets.xcassets */,
 				02DEFD851FF5A08600A890C4 /* APIKit */,
@@ -178,7 +176,6 @@
 			children = (
 				02DEFD531FF55E9F00A890C4 /* Main.storyboard */,
 				02DEFD5B1FF55E9F00A890C4 /* LaunchScreen.storyboard */,
-				02DEFD561FF55E9F00A890C4 /* WeatherCheck.xcdatamodeld */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -299,7 +296,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				02DEFD5D1FF55E9F00A890C4 /* LaunchScreen.storyboard in Resources */,
-				02DEFD841FF5765200A890C4 /* GoogleService-Info.plist in Resources */,
+				028131642068845700F6AA19 /* GoogleService-Info.plist in Resources */,
 				02DEFD5A1FF55E9F00A890C4 /* Assets.xcassets in Resources */,
 				02DEFD551FF55E9F00A890C4 /* Main.storyboard in Resources */,
 			);
@@ -330,7 +327,6 @@
 				02DEFD521FF55E9F00A890C4 /* MainMapViewController.swift in Sources */,
 				02DEFD8B1FF5B3B400A890C4 /* WeatherData.swift in Sources */,
 				0278570B200E6687000BD59A /* HelpManager.swift in Sources */,
-				02DEFD581FF55E9F00A890C4 /* WeatherCheck.xcdatamodeld in Sources */,
 				02DEFD501FF55E9F00A890C4 /* AppDelegate.swift in Sources */,
 				02DEFD871FF5A0A700A890C4 /* APIHandler.swift in Sources */,
 			);
@@ -499,10 +495,69 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Q7R95SLZZT;
+				DEVELOPMENT_TEAM = B393TV96RA;
 				INFOPLIST_FILE = WeatherCheck/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.weathercheck.ios;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"Accelerate\"",
+					"-framework",
+					"\"Alamofire\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreLocation\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"FirebaseAnalytics\"",
+					"-framework",
+					"\"FirebaseCore\"",
+					"-framework",
+					"\"FirebaseCoreDiagnostics\"",
+					"-framework",
+					"\"FirebaseInstanceID\"",
+					"-framework",
+					"\"FirebaseNanoPB\"",
+					"-framework",
+					"\"GLKit\"",
+					"-framework",
+					"\"GoogleMaps\"",
+					"-framework",
+					"\"GoogleMapsBase\"",
+					"-framework",
+					"\"GoogleMapsCore\"",
+					"-framework",
+					"\"GooglePlacePicker\"",
+					"-framework",
+					"\"GooglePlaces\"",
+					"-framework",
+					"\"GoogleToolboxForMac\"",
+					"-framework",
+					"\"ImageIO\"",
+					"-framework",
+					"\"OpenGLES\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"StoreKit\"",
+					"-framework",
+					"\"SwiftyJSON\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"nanopb\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.weathercheck1.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -514,10 +569,69 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Q7R95SLZZT;
+				DEVELOPMENT_TEAM = B393TV96RA;
 				INFOPLIST_FILE = WeatherCheck/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.weathercheck.ios;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"Accelerate\"",
+					"-framework",
+					"\"Alamofire\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreLocation\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"FirebaseAnalytics\"",
+					"-framework",
+					"\"FirebaseCore\"",
+					"-framework",
+					"\"FirebaseCoreDiagnostics\"",
+					"-framework",
+					"\"FirebaseInstanceID\"",
+					"-framework",
+					"\"FirebaseNanoPB\"",
+					"-framework",
+					"\"GLKit\"",
+					"-framework",
+					"\"GoogleMaps\"",
+					"-framework",
+					"\"GoogleMapsBase\"",
+					"-framework",
+					"\"GoogleMapsCore\"",
+					"-framework",
+					"\"GooglePlacePicker\"",
+					"-framework",
+					"\"GooglePlaces\"",
+					"-framework",
+					"\"GoogleToolboxForMac\"",
+					"-framework",
+					"\"ImageIO\"",
+					"-framework",
+					"\"OpenGLES\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"StoreKit\"",
+					"-framework",
+					"\"SwiftyJSON\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"nanopb\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.weathercheck1.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -626,19 +740,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		02DEFD561FF55E9F00A890C4 /* WeatherCheck.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				02DEFD571FF55E9F00A890C4 /* WeatherCheck.xcdatamodel */,
-			);
-			currentVersion = 02DEFD571FF55E9F00A890C4 /* WeatherCheck.xcdatamodel */;
-			path = WeatherCheck.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 02DEFD441FF55E9F00A890C4 /* Project object */;
 }

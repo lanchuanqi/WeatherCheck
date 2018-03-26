@@ -123,7 +123,7 @@ class MainMapViewController: UIViewController{
         control.insertSegment(withTitle: "°F", at: 0, animated: false)
         control.insertSegment(withTitle: "°C", at: 1, animated: false)
         control.backgroundColor = UIColor.white
-        control.tintColor = #colorLiteral(red: 0.5843137503, green: 0.8235294223, blue: 0.4196078479, alpha: 1)
+        control.tintColor = UIColor.gray //#colorLiteral(red: 0.5843137503, green: 0.8235294223, blue: 0.4196078479, alpha: 1)
         control.layer.cornerRadius = 5
         control.addTarget(self, action: #selector(segmentedControlChangedState), for: .valueChanged)
         return control
@@ -131,7 +131,9 @@ class MainMapViewController: UIViewController{
     
     var settingView: UIView = {
         var view = UIView()
-        view.backgroundColor = #colorLiteral(red: 0, green: 0.6267040372, blue: 0.8887307048, alpha: 1)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = #colorLiteral(red: 0.929680975, green: 0.9745903284, blue: 1, alpha: 1)
+        view.alpha = 0.85
         view.layer.cornerRadius = 15
         return view
     }()
@@ -139,7 +141,7 @@ class MainMapViewController: UIViewController{
         var label = UILabel()
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 15)
         label.minimumScaleFactor = 0.5
-        label.textColor = UIColor.white
+        label.textColor = UIColor.gray
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 15
         label.text = "Unit: "
@@ -149,9 +151,11 @@ class MainMapViewController: UIViewController{
         //°F is 0, °C is 1
         if sender.selectedSegmentIndex == 0{
             self.FahrenheitORCelsius = 1
+            self.defaults.set(1, forKey: "ForC")
         }
         else{
             self.FahrenheitORCelsius = 2
+            self.defaults.set(2, forKey: "ForC")
         }
     }
     
@@ -160,9 +164,13 @@ class MainMapViewController: UIViewController{
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Close", for: .normal)
         button.addTarget(self, action: #selector(settingCloseButtonClicked), for: .touchUpInside)
-        button.backgroundColor = UIColor.clear
-        button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont(name: "HelveticaNeue-Medium", size: 20)
+        button.backgroundColor = UIColor.white
+        button.setTitleColor(.gray, for: .normal)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 10
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.gray.cgColor
+        button.titleLabel?.font = UIFont(name: "HelveticaNeue", size: 15)
         return button
     }()
     @objc func settingCloseButtonClicked(sender: UIButton){
@@ -172,7 +180,10 @@ class MainMapViewController: UIViewController{
     var settingButton: UIButton = {
         var button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(#imageLiteral(resourceName: "search"), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "setting"), for: .normal)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 10
+        button.alpha = 0.9
         button.addTarget(self, action: #selector(settingButtonClicked), for: .touchUpInside)
         return button
     }()
@@ -469,11 +480,46 @@ class MainMapViewController: UIViewController{
         self.hidePopUpView()
     }
     
+    //alert blur view
+    var alertBlurView: UIView = {
+        var view = UIView()
+        view.alpha = 0.5
+        view.backgroundColor = UIColor.black
+        return view
+    }()
     @objc func tapLeftWeatherViewShowPopUpView(_sender: UITapGestureRecognizer){
-        guard let data = self.weatherData else {
-            self.getWeatherInfoByCoordinate()
-            return}
-        setUpPopUpViewUI(data: data)
+        if let data = self.weatherData {
+            setUpPopUpViewUI(data: data)
+        }
+        else {
+            if self.locationManager.location != nil{
+                self.getWeatherInfoByCoordinate()
+            }
+            else{
+                self.addBlurViewAndShowAlert()
+            }
+        }
+    }
+    func addBlurViewAndShowAlert(){
+        self.alertBlurView.isHidden = false
+        let alert = UIAlertController(title: "Enable Location", message: "Enable Location to check local weather detail.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Go to Settings", style: .default, handler: {(alertAction) in
+            guard let url = URL(string: UIApplicationOpenSettingsURLString) else{
+                alert.dismiss(animated: true, completion: nil)
+                self.alertBlurView.isHidden = true
+                return
+            }
+            UIApplication.shared.open(url, completionHandler: { (result) in
+                alert.dismiss(animated: true, completion: nil)
+                self.alertBlurView.isHidden = true
+            })
+            
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: {(alertAction) in
+            alert.dismiss(animated: true, completion: nil)
+            self.alertBlurView.isHidden = true
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
     
     func hidePopUpView(){
@@ -491,11 +537,20 @@ class MainMapViewController: UIViewController{
         guard let humidity = data.main?.humidity else {return}
         let visiablity = data.visibility
         guard let cityName = data.name else {return}
-        guard let windSpeed = data.wind?.speed else {return}
-        guard let windDeg = data.wind?.deg else {return}
         guard let cloud = data.clouds?.all else {return}
         guard let sunRise = data.sys?.sunrise else {return}
         guard let sunSet = data.sys?.sunset else {return}
+        
+        guard let windSpeed = data.wind?.speed else {return}
+        var windDirection = ""
+        let windSpeedOneDecimal = Double(round(10*windSpeed)/10)
+        if let windDeg = data.wind?.deg{
+             windDirection = HelpManager.convertWindDegreeToDirection(degree: windDeg)
+            self.popUpWindDetailLabel.text = "\(windDirection) \(windSpeedOneDecimal)m/s"
+        }
+        else {
+            self.popUpWindDetailLabel.text = "\(windSpeedOneDecimal)m/s"
+        }
         
         var fahrenheit = 0
         if self.FahrenheitORCelsius == 1{
@@ -507,15 +562,12 @@ class MainMapViewController: UIViewController{
             self.popUpViewFahrenheitLabel.text = "°C"
         }
         
-        let windDirection = HelpManager.convertWindDegreeToDirection(degree: windDeg)
-        let windSpeedOneDecimal = Double(round(10*windSpeed)/10)
         let sunrise = HelpManager.convertEpochToReadableTime(epoch: Double(sunRise))
         let sunset = HelpManager.convertEpochToReadableTime(epoch: Double(sunSet))
         
         self.popUpWeatherImageView.image = HelpManager.getWeatherBackgroundImageBasedOnWeatherConditionCode(code: weatherCode)
         self.popUpCityNameLabel.text = "\(cityName)"
         self.popUpDegreeLabel.text = "\(fahrenheit)"
-        self.popUpWindDetailLabel.text = "\(windDirection) \(windSpeedOneDecimal)m/s"
         self.popUpCloudDetailLabel.text = "\(cloud)%"
         self.popUpHumidityDetailLabel.text = "\(humidity)%"
         self.popUpPressureDetailLabel.text = "\(pressure) hPa"
@@ -534,26 +586,19 @@ class MainMapViewController: UIViewController{
             googleMapView.animate(to: camera)
         }
     }
-    func getCurrentLocation() -> CLLocationCoordinate2D?{
-        if locationManager.location?.coordinate != nil {
-            let location = locationManager.location?.coordinate
-            self.locationManager.stopUpdatingLocation()
-            return location
-        } else {
-            locationManager.requestWhenInUseAuthorization()
-            return nil
-        }
-    }
     
     func getWeatherInfoByCoordinate(){
-        guard let location = self.getCurrentLocation() else {return}
-        APIHandler().getWeatherFromLocationCoordinates(lat: Double(round(10*location.latitude)/10), long: Double(round(10*location.longitude)/10)) { (data) in
-            if let weatherData = data{
-                self.weatherData = weatherData
-                DispatchQueue.main.async {
-                    self.updateMainUIBasedOnWeatherData(data: weatherData)
+        if let location = self.locationManager.location?.coordinate{
+            APIHandler().getWeatherFromLocationCoordinates(lat: Double(round(10*location.latitude)/10), long: Double(round(10*location.longitude)/10)) { (data) in
+                if let weatherData = data{
+                    self.weatherData = weatherData
+                    DispatchQueue.main.async {
+                        if self.currentUnit != self.FahrenheitORCelsius{
+                            self.FahrenheitORCelsius = self.currentUnit
+                        }
+                        self.updateMainUIBasedOnWeatherData(data: weatherData)
+                    }
                 }
-
             }
         }
     }
@@ -589,12 +634,17 @@ class MainMapViewController: UIViewController{
         setUpLocationAndMap()
     }
     override func viewDidAppear(_ animated: Bool) {
-        getUserSettings()
         updateLocationOnMap()
+        
+        //hide views
         hidePopUpView()
         hideLongPressViews()
         hideSettingView()
+        self.alertBlurView.isHidden = true
+        
+        // update weather
         getWeatherInfoByCoordinate()
+        getUserSettings()
         self.apiCallFailedErrorLabel.alpha = 0
     }
     
@@ -639,7 +689,10 @@ class MainMapViewController: UIViewController{
         
         // settings view
         self.view.addSubview(settingView)
-        settingView.anchor(top: self.view.topAnchor, leading: self.view.leadingAnchor, trailing: self.view.trailingAnchor, bottom: nil, padding: UIEdgeInsets.init(top: 150, left: 40, bottom: 0, right: 40), size: CGSize.init(width: 0, height: 200))
+        settingView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 40).isActive = true
+        settingView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -40).isActive = true
+        settingView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        settingView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.5).isActive = true
         
         self.settingView.addSubview(settingUnitLabel)
         settingUnitLabel.anchor(top: settingView.topAnchor, leading: settingView.leadingAnchor, trailing: nil, bottom: nil, padding: UIEdgeInsets.init(top: 20, left: 20, bottom: 0, right: 0), size: CGSize.init(width: 50, height: 30))
@@ -647,8 +700,8 @@ class MainMapViewController: UIViewController{
         self.settingView.addSubview(settingCloseButton)
         settingCloseButton.bottomAnchor.constraint(equalTo: self.settingView.bottomAnchor, constant: -20).isActive = true
         settingCloseButton.centerXAnchor.constraint(equalTo: self.settingView.centerXAnchor).isActive = true
-        settingCloseButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        settingCloseButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        settingCloseButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        settingCloseButton.widthAnchor.constraint(equalToConstant: 60).isActive = true
         
         self.settingView.addSubview(settingSegmentedControl)
         settingSegmentedControl.topAnchor.constraint(equalTo: settingView.topAnchor, constant: 20).isActive = true
@@ -836,6 +889,9 @@ class MainMapViewController: UIViewController{
         apiCallFailedErrorLabel.topAnchor.constraint(equalTo: self.longPressAddMarkerView.bottomAnchor, constant: 20).isActive = true
         apiCallFailedErrorLabel.leftAnchor.constraint(equalTo: self.longPressAddMarkerView.leftAnchor, constant: 5).isActive = true
         apiCallFailedErrorLabel.rightAnchor.constraint(equalTo: self.longPressAddMarkerView.rightAnchor, constant: -5).isActive = true
+        
+        self.view.addSubview(alertBlurView)
+        alertBlurView.anchor(top: self.view.topAnchor, leading: self.view.leadingAnchor, trailing: self.view.trailingAnchor, bottom: self.view.bottomAnchor)
     }
     
     func setUpLocationAndMap(){
@@ -847,11 +903,14 @@ class MainMapViewController: UIViewController{
     }
     func getUserSettings(){
         let degreeSetting = self.defaults.integer(forKey: "ForC")
+        
         if degreeSetting == 0{
+            //means this value does not exist and set default as F
             self.defaults.set(1, forKey: "ForC")
         }
         else{
-            self.FahrenheitORCelsius = degreeSetting
+            self.currentUnit = degreeSetting
+            //self.FahrenheitORCelsius = degreeSetting
         }
     }
     
@@ -878,6 +937,7 @@ extension MainMapViewController: CLLocationManagerDelegate{
 
 
 extension MainMapViewController: GMSMapViewDelegate{
+    
     func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
         if self.addMarkerMood{
             APIHandler().getWeatherFromLocationCoordinates(lat: coordinate.latitude, long: coordinate.longitude, completion: { (data) in
@@ -951,9 +1011,7 @@ extension UIView{
 //known bug
 
 /*
- 1. some marker no response when tap
- 2. degree still is F every time open app
- 
+ 1. degree still is F every time open app, after add core data should be fine
  */
 
 

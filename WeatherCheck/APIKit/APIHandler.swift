@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 
 class APIHandler{
-    private let openWeatherMapAPIKey = "86367f486270c15891fed058da0c65fe"
+    private let openWeatherMapAPIKey = ""//use your own API key here
     private let openWeatherMapBaseURL = "https://api.openweathermap.org/data/2.5/weather"
     private let openWeatherIconBaseURL = "http://openweathermap.org/img/w/"
     
