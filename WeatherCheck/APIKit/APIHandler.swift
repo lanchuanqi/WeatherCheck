@@ -7,14 +7,19 @@
 //
 
 import Foundation
-import Alamofire
+import UIKit
 
-class APIHandler{
-    private let openWeatherMapAPIKey = ""//use your own API key here
+struct APIHandler{
+    static let shared = APIHandler()
+    
+    private let openWeatherMapAPIKey = ""
     private let openWeatherMapBaseURL = "https://api.openweathermap.org/data/2.5/weather"
     private let openWeatherIconBaseURL = "http://openweathermap.org/img/w/"
     
     func getWeatherFromCityName(city: String, completion: @escaping (WeatherData?) -> ()) {
+        if openWeatherMapAPIKey == ""{
+            fatalError("use your own OpenWeather API key here")
+        }
         guard let weatherRequestURL = URL(string: "\(openWeatherMapBaseURL)?APPID=\(openWeatherMapAPIKey)&q=\(city)") else{
             completion(nil)
             return
@@ -44,6 +49,9 @@ class APIHandler{
     
     
     func getWeatherFromLocationCoordinates(lat: Double, long: Double, completion: @escaping (WeatherData?) -> ()) {
+        if openWeatherMapAPIKey == ""{
+            fatalError("use your own OpenWeather API key here")
+        }
         guard let weatherRequestURL = URL(string: "\(openWeatherMapBaseURL)?APPID=\(openWeatherMapAPIKey)&lat=\(lat)&lon=\(long)") else{
             completion(nil)
             return

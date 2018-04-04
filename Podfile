@@ -10,8 +10,6 @@ target 'WeatherCheck' do
   pod 'GooglePlaces'
   pod 'GooglePlacePicker'
   pod 'Firebase/Core'
-  pod 'Alamofire', '~> 4.2.0'
-  pod 'SwiftyJSON'
   
   
   

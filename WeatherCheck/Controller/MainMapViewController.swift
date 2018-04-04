@@ -589,7 +589,7 @@ class MainMapViewController: UIViewController{
     
     func getWeatherInfoByCoordinate(){
         if let location = self.locationManager.location?.coordinate{
-            APIHandler().getWeatherFromLocationCoordinates(lat: Double(round(10*location.latitude)/10), long: Double(round(10*location.longitude)/10)) { (data) in
+            APIHandler.shared.getWeatherFromLocationCoordinates(lat: Double(round(10*location.latitude)/10), long: Double(round(10*location.longitude)/10)) { (data) in
                 if let weatherData = data{
                     self.weatherData = weatherData
                     DispatchQueue.main.async {
@@ -940,7 +940,7 @@ extension MainMapViewController: GMSMapViewDelegate{
     
     func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
         if self.addMarkerMood{
-            APIHandler().getWeatherFromLocationCoordinates(lat: coordinate.latitude, long: coordinate.longitude, completion: { (data) in
+            APIHandler.shared.getWeatherFromLocationCoordinates(lat: coordinate.latitude, long: coordinate.longitude, completion: { (data) in
                 if let weatherData = data{
                     self.addMarkerToGoogleMap(mapView, coordinate: coordinate, data: weatherData)
                 }
@@ -976,29 +976,6 @@ extension MainMapViewController: GMSMapViewDelegate{
             return false}
         self.setUpPopUpViewUI(data: weatherDetail)
         return true
-    }
-}
-extension UIView{
-    func anchor(top: NSLayoutYAxisAnchor?, leading: NSLayoutXAxisAnchor?, trailing: NSLayoutXAxisAnchor?, bottom: NSLayoutYAxisAnchor?, padding: UIEdgeInsets = .zero, size: CGSize = .zero){
-        self.translatesAutoresizingMaskIntoConstraints = false
-        if let top = top{
-            self.topAnchor.constraint(equalTo: top, constant: padding.top).isActive = true
-        }
-        if let leading = leading{
-            self.leadingAnchor.constraint(equalTo: leading, constant: padding.left).isActive = true
-        }
-        if let trailing = trailing{
-            self.trailingAnchor.constraint(equalTo: trailing, constant: -padding.right).isActive = true
-        }
-        if let bottom = bottom {
-            self.bottomAnchor.constraint(equalTo: bottom, constant: -padding.bottom).isActive = true
-        }
-        if size.width != 0{
-            self.widthAnchor.constraint(equalToConstant: size.width).isActive = true
-        }
-        if size.height != 0{
-            self.heightAnchor.constraint(equalToConstant: size.height).isActive = true
-        }
     }
 }
 

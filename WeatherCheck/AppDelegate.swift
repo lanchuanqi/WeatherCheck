@@ -22,7 +22,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         // Google Map Api
         
-        // use you google map api key
+        
+        fatalError("use you google map api key")
         GMSPlacesClient.provideAPIKey("")
         GMSServices.provideAPIKey("")
         
